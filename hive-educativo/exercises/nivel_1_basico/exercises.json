@@ -1,0 +1,445 @@
+[
+  {
+    "id": 1,
+    "title_es": "Consulta SELECT Básica",
+    "title_en": "Basic SELECT Query",
+    "difficulty": "easy",
+    "concepts": [
+      "SELECT",
+      "FROM"
+    ],
+    "description_es": "Aprende a cargar y consultar datos básicos con HiveQL. Selecciona las primeras 5 filas de la tabla users.",
+    "description_en": "Learn to load and query basic data with HiveQL. Select the first 5 rows from the users table.",
+    "dataset": "users.csv",
+    "initial_script": "-- Carga los datos de users.csv\n-- Selecciona las primeras 5 filas\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "-- Crear tabla externa\nCREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users LIMIT 5;",
+    "expected_output_file": "exercise_01_expected.txt",
+    "hints_es": [
+      "Usa CREATE EXTERNAL TABLE para cargar CSV",
+      "Define el esquema con tipos de datos",
+      "Usa TBLPROPERTIES para saltar el header",
+      "LIMIT 5 devuelve las primeras 5 filas"
+    ],
+    "hints_en": [
+      "Use CREATE EXTERNAL TABLE to load CSV",
+      "Define schema with data types",
+      "Use TBLPROPERTIES to skip header",
+      "LIMIT 5 returns the first 5 rows"
+    ]
+  },
+  {
+    "id": 2,
+    "title_es": "Filtrado con WHERE",
+    "title_en": "Filtering with WHERE",
+    "difficulty": "easy",
+    "concepts": [
+      "SELECT",
+      "WHERE"
+    ],
+    "description_es": "Filtra usuarios mayores de 25 años.",
+    "description_en": "Filter users older than 25 years.",
+    "dataset": "users.csv",
+    "initial_script": "-- Selecciona usuarios con age > 25\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE age > 25;",
+    "expected_output_file": "exercise_02_expected.txt",
+    "hints_es": [
+      "Usa WHERE para filtrar",
+      "La condición es age > 25",
+      "Asegúrate de crear la tabla primero"
+    ],
+    "hints_en": [
+      "Use WHERE to filter",
+      "The condition is age > 25",
+      "Make sure to create the table first"
+    ]
+  },
+  {
+    "id": 3,
+    "title_es": "Contar Registros",
+    "title_en": "Count Records",
+    "difficulty": "easy",
+    "concepts": [
+      "COUNT",
+      "GROUP BY"
+    ],
+    "description_es": "Cuenta cuántos usuarios hay por país.",
+    "description_en": "Count how many users there are per country.",
+    "dataset": "users.csv",
+    "initial_script": "-- Cuenta usuarios por país\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT country, COUNT(*) as total\nFROM users\nGROUP BY country;",
+    "expected_output_file": "exercise_03_expected.txt",
+    "hints_es": [
+      "Usa COUNT(*) para contar",
+      "GROUP BY agrupa por país",
+      "Dale un alias con AS"
+    ],
+    "hints_en": [
+      "Use COUNT(*) to count",
+      "GROUP BY groups by country",
+      "Give it an alias with AS"
+    ]
+  },
+  {
+    "id": 4,
+    "title_es": "Ordenar Resultados",
+    "title_en": "Sort Results",
+    "difficulty": "easy",
+    "concepts": [
+      "ORDER BY",
+      "DESC"
+    ],
+    "description_es": "Ordena los usuarios por edad de mayor a menor.",
+    "description_en": "Sort users by age from highest to lowest.",
+    "dataset": "users.csv",
+    "initial_script": "-- Ordena usuarios por edad descendente\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users ORDER BY age DESC;",
+    "expected_output_file": "exercise_04_expected.txt",
+    "hints_es": [
+      "Usa ORDER BY para ordenar",
+      "DESC ordena de mayor a menor",
+      "ASC ordena de menor a mayor (por defecto)"
+    ],
+    "hints_en": [
+      "Use ORDER BY to sort",
+      "DESC sorts from high to low",
+      "ASC sorts from low to high (default)"
+    ]
+  },
+  {
+    "id": 5,
+    "title_es": "Promedio de Edad",
+    "title_en": "Average Age",
+    "difficulty": "easy",
+    "concepts": [
+      "AVG",
+      "GROUP BY"
+    ],
+    "description_es": "Calcula la edad promedio por país.",
+    "description_en": "Calculate the average age per country.",
+    "dataset": "users.csv",
+    "initial_script": "-- Calcula AVG(age) por país\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT country, AVG(age) as avg_age\nFROM users\nGROUP BY country;",
+    "expected_output_file": "exercise_05_expected.txt",
+    "hints_es": [
+      "AVG() calcula el promedio",
+      "Agrupa por country con GROUP BY",
+      "Redondea con ROUND() si quieres"
+    ],
+    "hints_en": [
+      "AVG() calculates average",
+      "Group by country with GROUP BY",
+      "Round with ROUND() if desired"
+    ]
+  },
+  {
+    "id": 6,
+    "title_es": "Selección de Columnas",
+    "title_en": "Column Selection",
+    "difficulty": "easy",
+    "concepts": [
+      "SELECT específico"
+    ],
+    "description_es": "Selecciona solo name y country de los usuarios.",
+    "description_en": "Select only name and country from users.",
+    "dataset": "users.csv",
+    "initial_script": "-- Selecciona solo name y country\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name, country FROM users;",
+    "expected_output_file": "exercise_06_expected.txt",
+    "hints_es": [
+      "Especifica las columnas en lugar de usar *",
+      "Separa las columnas con comas",
+      "El orden importa"
+    ],
+    "hints_en": [
+      "Specify columns instead of using *",
+      "Separate columns with commas",
+      "Order matters"
+    ]
+  },
+  {
+    "id": 7,
+    "title_es": "Filtro Múltiple",
+    "title_en": "Multiple Filters",
+    "difficulty": "easy",
+    "concepts": [
+      "WHERE",
+      "AND"
+    ],
+    "description_es": "Encuentra usuarios de UK con edad mayor a 23.",
+    "description_en": "Find users from UK with age greater than 23.",
+    "dataset": "users.csv",
+    "initial_script": "-- Filtra por country='UK' AND age > 23\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE country = 'UK' AND age > 23;",
+    "expected_output_file": "exercise_07_expected.txt",
+    "hints_es": [
+      "Usa AND para combinar condiciones",
+      "country = 'UK' (con comillas)",
+      "Ambas condiciones deben cumplirse"
+    ],
+    "hints_en": [
+      "Use AND to combine conditions",
+      "country = 'UK' (with quotes)",
+      "Both conditions must be met"
+    ]
+  },
+  {
+    "id": 8,
+    "title_es": "Suma Total",
+    "title_en": "Total Sum",
+    "difficulty": "easy",
+    "concepts": [
+      "SUM"
+    ],
+    "description_es": "Calcula la suma total de todas las edades.",
+    "description_en": "Calculate the total sum of all ages.",
+    "dataset": "users.csv",
+    "initial_script": "-- Calcula SUM(age) de todos los usuarios\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT SUM(age) as total_age FROM users;",
+    "expected_output_file": "exercise_08_expected.txt",
+    "hints_es": [
+      "SUM() suma todos los valores",
+      "No necesitas GROUP BY para un solo valor",
+      "Dale un alias con AS"
+    ],
+    "hints_en": [
+      "SUM() adds up all values",
+      "No GROUP BY needed for a single value",
+      "Give it an alias with AS"
+    ]
+  },
+  {
+    "id": 9,
+    "title_es": "Máximo y Mínimo",
+    "title_en": "Maximum and Minimum",
+    "difficulty": "easy",
+    "concepts": [
+      "MAX",
+      "MIN"
+    ],
+    "description_es": "Encuentra la edad máxima y mínima.",
+    "description_en": "Find the maximum and minimum age.",
+    "dataset": "users.csv",
+    "initial_script": "-- Encuentra MAX(age) y MIN(age)\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT MAX(age) as max_age, MIN(age) as min_age FROM users;",
+    "expected_output_file": "exercise_09_expected.txt",
+    "hints_es": [
+      "MAX() devuelve el valor máximo",
+      "MIN() devuelve el valor mínimo",
+      "Puedes seleccionar múltiples agregaciones"
+    ],
+    "hints_en": [
+      "MAX() returns the maximum value",
+      "MIN() returns the minimum value",
+      "You can select multiple aggregations"
+    ]
+  },
+  {
+    "id": 10,
+    "title_es": "DISTINCT - Valores Únicos",
+    "title_en": "DISTINCT - Unique Values",
+    "difficulty": "easy",
+    "concepts": [
+      "DISTINCT"
+    ],
+    "description_es": "Lista todos los países únicos sin repetir.",
+    "description_en": "List all unique countries without duplicates.",
+    "dataset": "users.csv",
+    "initial_script": "-- Lista países únicos con DISTINCT\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED\nFIELDS TERMINATED BY ','\nSTORED AS TEXTFILE\nLOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT DISTINCT country FROM users;",
+    "expected_output_file": "exercise_10_expected.txt",
+    "hints_es": [
+      "DISTINCT elimina duplicados",
+      "Se coloca después de SELECT",
+      "Solo selecciona la columna que necesitas"
+    ],
+    "hints_en": [
+      "DISTINCT removes duplicates",
+      "Place it after SELECT",
+      "Only select the column you need"
+    ]
+  },
+  {
+    "id": 11,
+    "title_es": "LIMIT con Offset",
+    "title_en": "LIMIT with Offset",
+    "difficulty": "easy",
+    "concepts": [
+      "LIMIT"
+    ],
+    "description_es": "Selecciona 5 usuarios saltando los primeros 10.",
+    "description_en": "Select 5 users skipping the first 10.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa LIMIT con offset\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users LIMIT 5 OFFSET 10;",
+    "hints_es": [
+      "OFFSET salta filas",
+      "Se usa con LIMIT"
+    ]
+  },
+  {
+    "id": 12,
+    "title_es": "WHERE con LIKE",
+    "title_en": "WHERE with LIKE",
+    "difficulty": "easy",
+    "concepts": [
+      "LIKE",
+      "wildcards"
+    ],
+    "description_es": "Encuentra usuarios cuyo nombre empieza con 'A'.",
+    "description_en": "Find users whose name starts with 'A'.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa LIKE con wildcards\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE name LIKE 'A%';",
+    "hints_es": [
+      "% es wildcard",
+      "LIKE busca patrones"
+    ]
+  },
+  {
+    "id": 13,
+    "title_es": "IN - Lista de Valores",
+    "title_en": "IN - Value List",
+    "difficulty": "easy",
+    "concepts": [
+      "IN"
+    ],
+    "description_es": "Filtra usuarios de UK, USA y Canada.",
+    "description_en": "Filter users from UK, USA and Canada.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa IN para múltiples valores\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE country IN ('UK', 'USA', 'Canada');",
+    "hints_es": [
+      "IN verifica membresía",
+      "Alternativa a múltiples OR"
+    ]
+  },
+  {
+    "id": 14,
+    "title_es": "BETWEEN - Rango de Valores",
+    "title_en": "BETWEEN - Value Range",
+    "difficulty": "easy",
+    "concepts": [
+      "BETWEEN"
+    ],
+    "description_es": "Encuentra usuarios con edad entre 25 y 35.",
+    "description_en": "Find users with age between 25 and 35.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa BETWEEN para rangos\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE age BETWEEN 25 AND 35;",
+    "hints_es": [
+      "BETWEEN es inclusivo",
+      "Equivale a >= AND <="
+    ]
+  },
+  {
+    "id": 15,
+    "title_es": "COUNT DISTINCT",
+    "title_en": "COUNT DISTINCT",
+    "difficulty": "easy",
+    "concepts": [
+      "COUNT",
+      "DISTINCT"
+    ],
+    "description_es": "Cuenta cuántos países únicos hay.",
+    "description_en": "Count how many unique countries there are.",
+    "dataset": "users.csv",
+    "initial_script": "-- Combina COUNT con DISTINCT\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT COUNT(DISTINCT country) as unique_countries FROM users;",
+    "hints_es": [
+      "COUNT(DISTINCT col)",
+      "Cuenta valores únicos"
+    ]
+  },
+  {
+    "id": 16,
+    "title_es": "OR - Condiciones Alternativas",
+    "title_en": "OR - Alternative Conditions",
+    "difficulty": "easy",
+    "concepts": [
+      "OR"
+    ],
+    "description_es": "Usuarios de Spain o con edad < 22.",
+    "description_en": "Users from Spain or with age < 22.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa OR para condiciones alternativas\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE country = 'Spain' OR age < 22;",
+    "hints_es": [
+      "OR = al menos una condición",
+      "Diferente de AND"
+    ]
+  },
+  {
+    "id": 17,
+    "title_es": "NOT - Negación",
+    "title_en": "NOT - Negation",
+    "difficulty": "easy",
+    "concepts": [
+      "NOT"
+    ],
+    "description_es": "Usuarios que NO son de UK.",
+    "description_en": "Users that are NOT from UK.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa NOT para negar\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE country != 'UK';",
+    "hints_es": [
+      "!= o <> para diferente",
+      "NOT invierte condición"
+    ]
+  },
+  {
+    "id": 18,
+    "title_es": "GROUP BY con ORDER BY",
+    "title_en": "GROUP BY with ORDER BY",
+    "difficulty": "easy",
+    "concepts": [
+      "GROUP BY",
+      "ORDER BY"
+    ],
+    "description_es": "Cuenta usuarios por país y ordena por total descendente.",
+    "description_en": "Count users per country and sort by total descending.",
+    "dataset": "users.csv",
+    "initial_script": "-- Combina GROUP BY con ORDER BY\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT country, COUNT(*) as total\nFROM users\nGROUP BY country\nORDER BY total DESC;",
+    "hints_es": [
+      "ORDER BY va después de GROUP BY",
+      "Ordena por el agregado"
+    ]
+  },
+  {
+    "id": 19,
+    "title_es": "ROUND - Redondear Decimales",
+    "title_en": "ROUND - Round Decimals",
+    "difficulty": "easy",
+    "concepts": [
+      "ROUND",
+      "AVG"
+    ],
+    "description_es": "Calcula edad promedio redondeada a 2 decimales por país.",
+    "description_en": "Calculate average age rounded to 2 decimals per country.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa ROUND con AVG\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT country, ROUND(AVG(age), 2) as avg_age\nFROM users\nGROUP BY country;",
+    "hints_es": [
+      "ROUND(valor, decimales)",
+      "Útil con AVG"
+    ]
+  },
+  {
+    "id": 20,
+    "title_es": "NULL - Valores Nulos",
+    "title_en": "NULL - Null Values",
+    "difficulty": "easy",
+    "concepts": [
+      "IS NULL"
+    ],
+    "description_es": "Encuentra registros donde country es NULL.",
+    "description_en": "Find records where country is NULL.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa IS NULL para verificar nulos\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT, name STRING, age INT, country STRING, signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT * FROM users WHERE country IS NULL;",
+    "hints_es": [
+      "IS NULL verifica nulos",
+      "No uses = NULL"
+    ]
+  }
+]

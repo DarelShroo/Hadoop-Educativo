@@ -1,0 +1,805 @@
+[
+  {
+    "id": 1,
+    "title_es": "Cargar datos CSV básicos",
+    "title_en": "Load basic CSV data",
+    "description_es": "Carga el archivo users.csv usando PigStorage y muestra las primeras 5 filas. El archivo tiene columnas: user_id, name, age, country, signup_date.",
+    "description_en": "Load the users.csv file using PigStorage and display the first 5 rows. The file has columns: user_id, name, age, country, signup_date.",
+    "dataset": "users.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "LIMIT",
+      "DUMP"
+    ],
+    "initial_script": "-- Carga users.csv con PigStorage\n-- Define el esquema: user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray\n-- Muestra las primeras 5 filas usando LIMIT y DUMP\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_01_expected.txt",
+    "hints_es": [
+      "Usa PigStorage(',') para archivos CSV",
+      "LIMIT n toma las primeras n filas",
+      "DUMP muestra los resultados"
+    ],
+    "hints_en": [
+      "Use PigStorage(',') for CSV files",
+      "LIMIT n takes the first n rows",
+      "DUMP displays results"
+    ],
+    "solution_script": "-- Carga users.csv con PigStorage\n-- Define el esquema apropiado\n-- Muestra las primeras 5 filas\n\nusers = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nresult = LIMIT users 5;\nDUMP result;"
+  },
+  {
+    "id": 2,
+    "title_es": "Explorar esquema de datos",
+    "title_en": "Explore data schema",
+    "description_es": "Carga products.csv y usa DESCRIBE para ver el esquema de la relación.",
+    "description_en": "Load products.csv and use DESCRIBE to view the relation's schema.",
+    "dataset": "products.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "DESCRIBE"
+    ],
+    "initial_script": "-- Carga products.csv con esquema apropiado\n-- Usa DESCRIBE para ver el esquema\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_02_expected.txt",
+    "hints_es": [
+      "DESCRIBE muestra el esquema sin ejecutar el pipeline",
+      "Define el esquema con AS (...)"
+    ],
+    "hints_en": [
+      "DESCRIBE shows schema without executing the pipeline",
+      "Define schema with AS (...)"
+    ],
+    "solution_script": "-- Carga products.csv con esquema\nproducts = LOAD '/datasets/products.csv' USING PigStorage(',') AS (product_name:chararray, category:chararray, price:float, brand:chararray);\nDESCRIBE products;"
+  },
+  {
+    "id": 3,
+    "title_es": "Filtrar por edad",
+    "title_en": "Filter by age",
+    "description_es": "Carga users.csv y filtra solo usuarios mayores de 40 años.",
+    "description_en": "Load users.csv and filter only users older than 40 years.",
+    "dataset": "users.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "-- COMPLETA: Carga users.csv\nusers = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Filtra usuarios con age > 40\nseniors = FILTER users BY age > 40;\n\nDUMP seniors;\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_03_expected.txt",
+    "hints_es": [
+      "FILTER relation BY condición",
+      "Usa el operador > para mayor que"
+    ],
+    "hints_en": [
+      "FILTER relation BY condition",
+      "Use > operator for greater than"
+    ],
+    "solution_script": "-- COMPLETA: Carga users.csv\nusers = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Filtra usuarios con age > 40\nseniors = FILTER users BY age > 40;\n\nDUMP seniors;"
+  },
+  {
+    "id": 4,
+    "title_es": "Seleccionar columnas específicas",
+    "title_en": "Select specific columns",
+    "description_es": "Carga users.csv y proyecta solo las columnas name y country.",
+    "description_en": "Load users.csv and project only the name and country columns.",
+    "dataset": "users.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "GENERATE",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_04_expected.txt",
+    "hints_es": [
+      "FOREACH ... GENERATE col1, col2",
+      "No necesitas AS si mantienes nombres originales"
+    ],
+    "hints_en": [
+      "FOREACH ... GENERATE col1, col2",
+      "No need for AS if keeping original names"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Selecciona solo name y country\nname_country = FOREACH users GENERATE name, country;\n\nDUMP name_country;"
+  },
+  {
+    "id": 5,
+    "title_es": "Filtrar por país",
+    "title_en": "Filter by country",
+    "description_es": "Carga users.csv y filtra solo usuarios de 'USA'.",
+    "description_en": "Load users.csv and filter only users from 'USA'.",
+    "dataset": "users.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_05_expected.txt",
+    "hints_es": [
+      "Usa == para comparación de igualdad",
+      "Las cadenas van entre comillas simples"
+    ],
+    "hints_en": [
+      "Use == for equality comparison",
+      "Strings use single quotes"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Filtra usuarios de USA\nusa_users = FILTER users BY country == 'USA';\n\nDUMP usa_users;"
+  },
+  {
+    "id": 6,
+    "title_es": "Ordenar por edad",
+    "title_en": "Sort by age",
+    "description_es": "Carga users.csv y ordena por edad en orden descendente.",
+    "description_en": "Load users.csv and sort by age in descending order.",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "ORDER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_06_expected.txt",
+    "hints_es": [
+      "ORDER BY campo DESC para descendente",
+      "Por defecto es ascendente (ASC)"
+    ],
+    "hints_en": [
+      "ORDER BY field DESC for descending",
+      "Default is ascending (ASC)"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Ordena por edad descendente\nsorted_users = ORDER users BY age DESC;\n\nDUMP sorted_users;"
+  },
+  {
+    "id": 7,
+    "title_es": "Filtrar con múltiples condiciones",
+    "title_en": "Filter with multiple conditions",
+    "description_es": "Carga users.csv y filtra usuarios de 'Canada' con edad entre 25 y 35 (inclusive).",
+    "description_en": "Load users.csv and filter users from 'Canada' with age between 25 and 35 (inclusive).",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "AND"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_07_expected.txt",
+    "hints_es": [
+      "Usa AND para combinar condiciones",
+      "Usa >= y <= para rangos inclusivos"
+    ],
+    "hints_en": [
+      "Use AND to combine conditions",
+      "Use >= and <= for inclusive ranges"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Filtra canadienses entre 25 y 35 años\ncanada_young = FILTER users BY country == 'Canada' AND age >= 25 AND age <= 35;\n\nDUMP canada_young;"
+  },
+  {
+    "id": 8,
+    "title_es": "Transformación aritmética",
+    "title_en": "Arithmetic transformation",
+    "description_es": "Carga users.csv y crea una nueva columna 'age_in_months' multiplicando age por 12.",
+    "description_en": "Load users.csv and create a new column 'age_in_months' by multiplying age by 12.",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "GENERATE",
+      "arithmetic"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_08_expected.txt",
+    "hints_es": [
+      "Operaciones aritméticas: +, -, *, /, %",
+      "Usa AS para nombrar nuevas columnas"
+    ],
+    "hints_en": [
+      "Arithmetic operations: +, -, *, /, %",
+      "Use AS to name new columns"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Genera name, age, age_in_months\nusers_months = FOREACH users GENERATE name, age, age * 12 AS age_in_months;\n\nDUMP users_months;"
+  },
+  {
+    "id": 9,
+    "title_es": "Eliminar duplicados",
+    "title_en": "Remove duplicates",
+    "description_es": "Carga users.csv, extrae solo la columna country y elimina duplicados.",
+    "description_en": "Load users.csv, extract only the country column and remove duplicates.",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "DISTINCT",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_09_expected.txt",
+    "hints_es": [
+      "DISTINCT elimina tuplas duplicadas",
+      "Primero proyecta la columna, luego DISTINCT"
+    ],
+    "hints_en": [
+      "DISTINCT removes duplicate tuples",
+      "First project the column, then DISTINCT"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Extrae países\ncountries = FOREACH users GENERATE country;\n\n-- COMPLETA: Elimina duplicados\nunique_countries = DISTINCT countries;\n\nDUMP unique_countries;"
+  },
+  {
+    "id": 10,
+    "title_es": "Filtrar productos caros",
+    "title_en": "Filter expensive products",
+    "description_es": "Carga products.csv y filtra productos con precio mayor a 500.",
+    "description_en": "Load products.csv and filter products with price greater than 500.",
+    "dataset": "products.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_10_expected.txt",
+    "hints_es": [
+      "Compara campos numéricos con >, <, >=, <="
+    ],
+    "hints_en": [
+      "Compare numeric fields with >, <, >=, <="
+    ],
+    "solution_script": "products = LOAD '/datasets/products.csv' USING PigStorage(',') AS (product_name:chararray, category:chararray, price:float, brand:chararray);\n\n-- COMPLETA: Filtra productos con price > 500\nexpensive = FILTER products BY price > 500;\n\nDUMP expensive;"
+  },
+  {
+    "id": 11,
+    "title_es": "Filtrar por categoría",
+    "title_en": "Filter by category",
+    "description_es": "Carga products.csv y filtra solo productos de categoría 'Electronics'.",
+    "description_en": "Load products.csv and filter only products from 'Electronics' category.",
+    "dataset": "products.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_11_expected.txt",
+    "hints_es": [
+      "Comparación de strings con =="
+    ],
+    "hints_en": [
+      "String comparison with =="
+    ],
+    "solution_script": "products = LOAD '/datasets/products.csv' USING PigStorage(',') AS (product_name:chararray, category:chararray, price:float, brand:chararray);\n\n-- COMPLETA: Filtra Electronics\nelectronics = FILTER products BY category == 'Electronics';\n\nDUMP electronics;"
+  },
+  {
+    "id": 12,
+    "title_es": "Top 10 más caros",
+    "title_en": "Top 10 most expensive",
+    "description_es": "Carga products.csv, ordena por precio descendente y toma los 10 primeros.",
+    "description_en": "Load products.csv, sort by price descending and take the first 10.",
+    "dataset": "products.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "ORDER",
+      "LIMIT",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_12_expected.txt",
+    "hints_es": [
+      "Primero ORDER, luego LIMIT"
+    ],
+    "hints_en": [
+      "First ORDER, then LIMIT"
+    ],
+    "solution_script": "products = LOAD '/datasets/products.csv' USING PigStorage(',') AS (product_name:chararray, category:chararray, price:float, brand:chararray);\n\n-- COMPLETA: Ordena por precio DESC y toma top 10\nsorted = ORDER products BY price DESC;\ntop10 = LIMIT sorted 10;\n\nDUMP top10;"
+  },
+  {
+    "id": 13,
+    "title_es": "Filtrar órdenes grandes",
+    "title_en": "Filter large orders",
+    "description_es": "Carga orders.csv y filtra órdenes con quantity mayor o igual a 3.",
+    "description_en": "Load orders.csv and filter orders with quantity greater than or equal to 3.",
+    "dataset": "orders.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_13_expected.txt",
+    "hints_es": [
+      "Usa >= para mayor o igual"
+    ],
+    "hints_en": [
+      "Use >= for greater than or equal"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Filtra quantity >= 3\nlarge_orders = FILTER orders BY quantity >= 3;\n\nDUMP large_orders;"
+  },
+  {
+    "id": 14,
+    "title_es": "Calcular total de orden",
+    "title_en": "Calculate order total",
+    "description_es": "Carga orders.csv y crea una columna 'total' multiplicando quantity por price.",
+    "description_en": "Load orders.csv and create a 'total' column by multiplying quantity by price.",
+    "dataset": "orders.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "GENERATE",
+      "arithmetic"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_14_expected.txt",
+    "hints_es": [
+      "Multiplica quantity * price"
+    ],
+    "hints_en": [
+      "Multiply quantity * price"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Genera order_id, product, total\norder_totals = FOREACH orders GENERATE order_id, product, quantity * price AS total;\n\nDUMP order_totals;"
+  },
+  {
+    "id": 15,
+    "title_es": "Filtrar con OR",
+    "title_en": "Filter with OR",
+    "description_es": "Carga orders.csv y filtra órdenes de 'Laptop' O 'Phone'.",
+    "description_en": "Load orders.csv and filter orders for 'Laptop' OR 'Phone'.",
+    "dataset": "orders.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "OR"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_15_expected.txt",
+    "hints_es": [
+      "Usa OR para condiciones alternativas"
+    ],
+    "hints_en": [
+      "Use OR for alternative conditions"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Filtra Laptop o Phone\ntech_orders = FILTER orders BY product == 'Laptop' OR product == 'Phone';\n\nDUMP tech_orders;"
+  },
+  {
+    "id": 16,
+    "title_es": "Filtrar con NOT",
+    "title_en": "Filter with NOT",
+    "description_es": "Carga users.csv y filtra usuarios que NO son de 'USA'.",
+    "description_en": "Load users.csv and filter users who are NOT from 'USA'.",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "NOT"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_16_expected.txt",
+    "hints_es": [
+      "Usa NOT (condición) o el operador !="
+    ],
+    "hints_en": [
+      "Use NOT (condition) or the != operator"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Filtra no-USA (dos formas posibles)\n-- Forma 1: NOT\nnon_usa = FILTER users BY NOT (country == 'USA');\n-- Forma 2: !=\n-- non_usa = FILTER users BY country != 'USA';\n\nDUMP non_usa;"
+  },
+  {
+    "id": 17,
+    "title_es": "Proyectar con renombrado",
+    "title_en": "Project with renaming",
+    "description_es": "Carga employees.csv y proyecta name como 'employee_name' y salary como 'annual_salary'.",
+    "description_en": "Load employees.csv and project name as 'employee_name' and salary as 'annual_salary'.",
+    "dataset": "employees.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "GENERATE",
+      "AS"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_17_expected.txt",
+    "hints_es": [
+      "Usa AS para renombrar columnas"
+    ],
+    "hints_en": [
+      "Use AS to rename columns"
+    ],
+    "solution_script": "employees = LOAD '/datasets/employees.csv' USING PigStorage(',') AS (emp_id:int, name:chararray, department:chararray, salary:int, hire_date:chararray, manager_id:chararray);\n\n-- COMPLETA: Proyecta con nombres nuevos\nrenamed = FOREACH employees GENERATE name AS employee_name, salary AS annual_salary;\n\nDUMP renamed;"
+  },
+  {
+    "id": 18,
+    "title_es": "Filtrar departamento",
+    "title_en": "Filter department",
+    "description_es": "Carga employees.csv y filtra empleados del departamento 'Engineering'.",
+    "description_en": "Load employees.csv and filter employees from 'Engineering' department.",
+    "dataset": "employees.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_18_expected.txt",
+    "hints_es": [
+      "Filtra por department == 'Engineering'"
+    ],
+    "hints_en": [
+      "Filter by department == 'Engineering'"
+    ],
+    "solution_script": "employees = LOAD '/datasets/employees.csv' USING PigStorage(',') AS (emp_id:int, name:chararray, department:chararray, salary:int, hire_date:chararray, manager_id:chararray);\n\n-- COMPLETA: Filtra Engineering\nengineers = FILTER employees BY department == 'Engineering';\n\nDUMP engineers;"
+  },
+  {
+    "id": 19,
+    "title_es": "Filtrar rango salarial",
+    "title_en": "Filter salary range",
+    "description_es": "Carga employees.csv y filtra empleados con salario entre 55000 y 65000 (inclusive).",
+    "description_en": "Load employees.csv and filter employees with salary between 55000 and 65000 (inclusive).",
+    "dataset": "employees.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "AND"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_19_expected.txt",
+    "hints_es": [
+      "Combina dos condiciones con AND"
+    ],
+    "hints_en": [
+      "Combine two conditions with AND"
+    ],
+    "solution_script": "employees = LOAD '/datasets/employees.csv' USING PigStorage(',') AS (emp_id:int, name:chararray, department:chararray, salary:int, hire_date:chararray, manager_id:chararray);\n\n-- COMPLETA: Filtra rango salarial\nmid_salary = FILTER employees BY salary >= 55000 AND salary <= 65000;\n\nDUMP mid_salary;"
+  },
+  {
+    "id": 20,
+    "title_es": "Ordenar por nombre",
+    "title_en": "Sort by name",
+    "description_es": "Carga employees.csv y ordena alfabéticamente por nombre en orden ascendente.",
+    "description_en": "Load employees.csv and sort alphabetically by name in ascending order.",
+    "dataset": "employees.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "ORDER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_20_expected.txt",
+    "hints_es": [
+      "ORDER BY name (ASC es opcional, es el default)"
+    ],
+    "hints_en": [
+      "ORDER BY name (ASC is optional, it's the default)"
+    ],
+    "solution_script": "employees = LOAD '/datasets/employees.csv' USING PigStorage(',') AS (emp_id:int, name:chararray, department:chararray, salary:int, hire_date:chararray, manager_id:chararray);\n\n-- COMPLETA: Ordena por nombre\nsorted_emp = ORDER employees BY name ASC;\n\nDUMP sorted_emp;"
+  },
+  {
+    "id": 21,
+    "title_es": "Contar películas por género (preparación)",
+    "title_en": "Count movies by genre (preparation)",
+    "description_es": "Carga movies.csv y muestra solo columnas genre y title. (Aprenderemos COUNT en Nivel 2)",
+    "description_en": "Load movies.csv and show only genre and title columns. (We'll learn COUNT in Level 2)",
+    "dataset": "movies.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_21_expected.txt",
+    "hints_es": [
+      "FOREACH ... GENERATE campo1, campo2"
+    ],
+    "hints_en": [
+      "FOREACH ... GENERATE field1, field2"
+    ],
+    "solution_script": "movies = LOAD '/datasets/movies.csv' USING PigStorage(',') AS (movie_id:int, title:chararray, year:int, genre:chararray, rating:float);\n\n-- COMPLETA: Extrae genre y title\ngenre_titles = FOREACH movies GENERATE genre, title;\n\nDUMP genre_titles;"
+  },
+  {
+    "id": 22,
+    "title_es": "Filtrar películas recientes",
+    "title_en": "Filter recent movies",
+    "description_es": "Carga movies.csv y filtra películas del año 2000 o posterior.",
+    "description_en": "Load movies.csv and filter movies from year 2000 or later.",
+    "dataset": "movies.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_22_expected.txt",
+    "hints_es": [
+      "Filtra por year >= 2000"
+    ],
+    "hints_en": [
+      "Filter by year >= 2000"
+    ],
+    "solution_script": "movies = LOAD '/datasets/movies.csv' USING PigStorage(',') AS (movie_id:int, title:chararray, year:int, genre:chararray, rating:float);\n\n-- COMPLETA: Filtra year >= 2000\nrecent_movies = FILTER movies BY year >= 2000;\n\nDUMP recent_movies;"
+  },
+  {
+    "id": 23,
+    "title_es": "Top películas por rating",
+    "title_en": "Top movies by rating",
+    "description_es": "Carga movies.csv, ordena por rating descendente y toma las 5 primeras.",
+    "description_en": "Load movies.csv, sort by rating descending and take the first 5.",
+    "dataset": "movies.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "ORDER",
+      "LIMIT",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_23_expected.txt",
+    "hints_es": [
+      "ORDER BY rating DESC, luego LIMIT 5"
+    ],
+    "hints_en": [
+      "ORDER BY rating DESC, then LIMIT 5"
+    ],
+    "solution_script": "movies = LOAD '/datasets/movies.csv' USING PigStorage(',') AS (movie_id:int, title:chararray, year:int, genre:chararray, rating:float);\n\n-- COMPLETA: Ordena por rating DESC y toma top 5\nsorted = ORDER movies BY rating DESC;\ntop5 = LIMIT sorted 5;\n\nDUMP top5;"
+  },
+  {
+    "id": 24,
+    "title_es": "Filtrar por género",
+    "title_en": "Filter by genre",
+    "description_es": "Carga movies.csv y filtra solo películas del género 'Sci-Fi'.",
+    "description_en": "Load movies.csv and filter only 'Sci-Fi' genre movies.",
+    "dataset": "movies.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_24_expected.txt",
+    "hints_es": [
+      "Filtra por genre == 'Sci-Fi'"
+    ],
+    "hints_en": [
+      "Filter by genre == 'Sci-Fi'"
+    ],
+    "solution_script": "movies = LOAD '/datasets/movies.csv' USING PigStorage(',') AS (movie_id:int, title:chararray, year:int, genre:chararray, rating:float);\n\n-- COMPLETA: Filtra Sci-Fi\nscifi = FILTER movies BY genre == 'Sci-Fi';\n\nDUMP scifi;"
+  },
+  {
+    "id": 25,
+    "title_es": "Filtrar ventas por región",
+    "title_en": "Filter sales by region",
+    "description_es": "Carga sales.csv y filtra ventas de la región 'North'.",
+    "description_en": "Load sales.csv and filter sales from 'North' region.",
+    "dataset": "sales.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_25_expected.txt",
+    "hints_es": [
+      "Filtra por region == 'North'"
+    ],
+    "hints_en": [
+      "Filter by region == 'North'"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Filtra región North\nnorth_sales = FILTER sales BY region == 'North';\n\nDUMP north_sales;"
+  },
+  {
+    "id": 26,
+    "title_es": "Ventas grandes",
+    "title_en": "Large sales",
+    "description_es": "Carga sales.csv y filtra ventas con amount mayor a 5000.",
+    "description_en": "Load sales.csv and filter sales with amount greater than 5000.",
+    "dataset": "sales.csv",
+    "difficulty": 1,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_26_expected.txt",
+    "hints_es": [
+      "Filtra por amount > 5000"
+    ],
+    "hints_en": [
+      "Filter by amount > 5000"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Filtra amount > 5000\nlarge_sales = FILTER sales BY amount > 5000;\n\nDUMP large_sales;"
+  },
+  {
+    "id": 27,
+    "title_es": "Regiones únicas",
+    "title_en": "Unique regions",
+    "description_es": "Carga sales.csv, extrae la columna region y elimina duplicados.",
+    "description_en": "Load sales.csv, extract the region column and remove duplicates.",
+    "dataset": "sales.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FOREACH",
+      "DISTINCT",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_27_expected.txt",
+    "hints_es": [
+      "FOREACH ... GENERATE region, luego DISTINCT"
+    ],
+    "hints_en": [
+      "FOREACH ... GENERATE region, then DISTINCT"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Extrae regiones\nregions = FOREACH sales GENERATE region;\n\n-- COMPLETA: Elimina duplicados\nunique_regions = DISTINCT regions;\n\nDUMP unique_regions;"
+  },
+  {
+    "id": 28,
+    "title_es": "Combinar región y categoría",
+    "title_en": "Combine region and category",
+    "description_es": "Carga sales.csv y filtra ventas de región 'West' Y categoría 'Electronics'.",
+    "description_en": "Load sales.csv and filter sales from 'West' region AND 'Electronics' category.",
+    "dataset": "sales.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "FILTER",
+      "AND"
+    ],
+    "initial_script": "\n\n-- TODO: Completa el código\n",
+    "expected_output_file": "exercise_28_expected.txt",
+    "hints_es": [
+      "Combina dos condiciones con AND"
+    ],
+    "hints_en": [
+      "Combine two conditions with AND"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Filtra West y Electronics\nwest_electronics = FILTER sales BY region == 'West' AND product_category == 'Electronics';\n\nDUMP west_electronics;"
+  },
+  {
+    "id": 29,
+    "title_es": "Ordenar ventas por monto",
+    "title_en": "Sort sales by amount",
+    "description_es": "Carga sales.csv y ordena por amount en orden descendente.",
+    "description_en": "Load sales.csv and sort by amount in descending order.",
+    "dataset": "sales.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "ORDER",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_29_expected.txt",
+    "hints_es": [
+      "ORDER BY amount DESC"
+    ],
+    "hints_en": [
+      "ORDER BY amount DESC"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Ordena por amount DESC\nsorted_sales = ORDER sales BY amount DESC;\n\nDUMP sorted_sales;"
+  },
+  {
+    "id": 30,
+    "title_es": "Top 10 ventas",
+    "title_en": "Top 10 sales",
+    "description_es": "Carga sales.csv, ordena por amount descendente y toma las 10 primeras.",
+    "description_en": "Load sales.csv, sort by amount descending and take the first 10.",
+    "dataset": "sales.csv",
+    "difficulty": 2,
+    "concepts": [
+      "LOAD",
+      "ORDER",
+      "LIMIT",
+      "DUMP"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_30_expected.txt",
+    "hints_es": [
+      "ORDER BY amount DESC, luego LIMIT 10"
+    ],
+    "hints_en": [
+      "ORDER BY amount DESC, then LIMIT 10"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Ordena y toma top 10\nsorted = ORDER sales BY amount DESC;\ntop10 = LIMIT sorted 10;\n\nDUMP top10;"
+  },
+  {
+    "id": 31,
+    "title_es": "DISTINCT en Múltiples Columnas",
+    "title_en": "DISTINCT Multiple Columns",
+    "difficulty": "easy",
+    "concepts": [
+      "DISTINCT"
+    ],
+    "description_es": "Obtén combinaciones únicas de country y age.",
+    "dataset": "users.csv",
+    "initial_script": "-- DISTINCT con múltiples campos\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\ndistinct_combo = DISTINCT (FOREACH users GENERATE country, age);\nresult = ORDER distinct_combo BY country, age;\nDUMP result;",
+    "hints_es": [
+      "DIST INCT elimina duplicados de todas las columnas especificadas"
+    ]
+  },
+  {
+    "id": 32,
+    "title_es": "SAMPLE - Muestreo Aleatorio",
+    "title_en": "SAMPLE - Random Sampling",
+    "difficulty": "easy",
+    "concepts": [
+      "SAMPLE"
+    ],
+    "description_es": "Toma una muestra aleatoria del 30% de usuarios.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa SAMPLE para muestreo\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nsampled = SAMPLE users 0.3;\nDUMP sampled;",
+    "hints_es": [
+      "SAMPLE toma porcentaje aleatorio",
+      "0.3 = 30%"
+    ]
+  },
+  {
+    "id": 33,
+    "title_es": "UNION - Unir Datasets",
+    "title_en": "UNION - Merge Datasets",
+    "difficulty": "easy",
+    "concepts": [
+      "UNION"
+    ],
+    "description_es": "Combina jóvenes (<25) y seniors (>40) usando UNION.",
+    "dataset": "users.csv",
+    "initial_script": "-- UNION combina relaciones\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nyoung = FILTER users BY age < 25;\nsenior = FILTER users BY age > 40;\ncombined = UNION young, senior;\nDUMP combined;",
+    "hints_es": [
+      "UNION une datasets",
+      "Deben tener mismo esquema"
+    ]
+  },
+  {
+    "id": 34,
+    "title_es": "SPLIT - Dividir en Múltiples Relaciones",
+    "title_en": "SPLIT - Divide Into Multiple Relations",
+    "difficulty": "easy",
+    "concepts": [
+      "SPLIT"
+    ],
+    "description_es": "Divide users en jóvenes, adultos y seniors.",
+    "dataset": "users.csv",
+    "initial_script": "-- SPLIT crea múltiples relaciones\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nSPLIT users INTO young IF age < 25, adult IF age >= 25 AND age <= 40, senior IF age > 40;\nDUMP young;",
+    "hints_es": [
+      "SPLIT ... INTO ... IF",
+      "Crea múltiples relaciones"
+    ]
+  },
+  {
+    "id": 35,
+    "title_es": "MAX y MIN en GROUP",
+    "title_en": "MAX and MIN in GROUP",
+    "difficulty": "easy",
+    "concepts": [
+      "MAX",
+      "MIN",
+      "GROUP"
+    ],
+    "description_es": "Encuentra edad máxima y mínima por país.",
+    "dataset": "users.csv",
+    "initial_script": "-- MAX y MIN agregados\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\ngrouped = GROUP users BY country;\nresult = FOREACH grouped GENERATE group, MAX(users.age), MIN(users.age);\nDUMP result;",
+    "hints_es": [
+      "MAX() y MIN() funcionan con GROUP"
+    ]
+  }
+]

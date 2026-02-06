@@ -1,0 +1,72 @@
+[
+  {
+    "name": "titanic.csv",
+    "description": "Titanic passenger data for joins and filtering",
+    "type": "downloaded"
+  },
+  {
+    "name": "iris.csv",
+    "description": "Iris flower dataset for grouping and basic operations",
+    "type": "downloaded"
+  },
+  {
+    "name": "wine-quality-red.csv",
+    "description": "Red wine quality dataset for aggregations",
+    "type": "downloaded"
+  },
+  {
+    "name": "wine-quality-white.csv",
+    "description": "White wine quality dataset for aggregations",
+    "type": "downloaded"
+  },
+  {
+    "name": "users.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "orders.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "products.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "server-logs.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "movies.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "ratings.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "employees.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "sales.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "web-clicks.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  },
+  {
+    "name": "sensors.csv",
+    "description": "Synthetic dataset",
+    "type": "generated"
+  }
+]

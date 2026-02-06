@@ -1,0 +1,388 @@
+[
+  {
+    "id": 1,
+    "title_es": "Definir macro simple",
+    "title_en": "Define simple macro",
+    "description_es": "Define un macro llamado 'filter_and_count' que filtre datos por un campo y cuente los resultados.",
+    "description_en": "Define a macro called 'filter_and_count' that filters data by a field and counts results.",
+    "dataset": "users.csv",
+    "difficulty": 5,
+    "concepts": [
+      "MACRO",
+      "DEFINE",
+      "RETURNS"
+    ],
+    "initial_script": "-- COMPLETA: Define el macro\nDEFINE filter_and_count(data, field, value) RETURNS result {\n  filtered = FILTER $data BY $field == $value;\n  $result = FOREACH (GROUP filtered ALL) GENERATE COUNT(filtered) AS total;\n};\n\nusers = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- Usar el macro\nusa_count = filter_and_count(users, country, 'USA');\nDUMP usa_count;\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_01_expected.txt",
+    "hints_es": [
+      "DEFINE nombre(params) RETURNS var { ... }",
+      "Usa $param para acceder a parámetros"
+    ],
+    "hints_en": [
+      "DEFINE name(params) RETURNS var { ... }",
+      "Use $param to access parameters"
+    ],
+    "solution_script": "-- COMPLETA: Define el macro\nDEFINE filter_and_count(data, field, value) RETURNS result {\n  filtered = FILTER $data BY $field == $value;\n  $result = FOREACH (GROUP filtered ALL) GENERATE COUNT(filtered) AS total;\n};\n\nusers = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- Usar el macro\nusa_count = filter_and_count(users, country, 'USA');\nDUMP usa_count;"
+  },
+  {
+    "id": 5,
+    "title_es": "Macro para top N",
+    "title_en": "Macro for top N",
+    "description_es": "Define un macro que tome una relación, un campo y N, y devuelva los top N ordenados DESC.",
+    "description_en": "Define a macro that takes a relation, a field and N, and returns top N sorted DESC.",
+    "dataset": "sales.csv",
+    "difficulty": 5,
+    "concepts": [
+      "MACRO",
+      "ORDER",
+      "LIMIT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_05_expected.txt",
+    "hints_es": [
+      "Dentro del macro, usa ORDER BY y LIMIT"
+    ],
+    "hints_en": [
+      "Inside macro, use ORDER BY and LIMIT"
+    ],
+    "solution_script": "DEFINE top_n(relation, sort_field, n) RETURNS top_records {\n  sorted = ORDER $relation BY $sort_field DESC;\n  $top_records = LIMIT sorted $n;\n};\n\nsales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\ntop10_sales = top_n(sales, amount, 10);\nDUMP top10_sales;"
+  },
+  {
+    "id": 17,
+    "title_es": "GROUP con PARALLEL",
+    "title_en": "GROUP with PARALLEL",
+    "description_es": "Agrupa orders.csv por product usando PARALLEL 10 para distribuir el procesamiento.",
+    "description_en": "Group orders.csv by product using PARALLEL 10 to distribute processing.",
+    "dataset": "orders.csv",
+    "difficulty": 4,
+    "concepts": [
+      "GROUP",
+      "PARALLEL"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_17_expected.txt",
+    "hints_es": [
+      "GROUP ... BY campo PARALLEL n"
+    ],
+    "hints_en": [
+      "GROUP ... BY field PARALLEL n"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Agrupa con PARALLEL\nby_product = GROUP orders BY product PARALLEL 10;\n\ncounts = FOREACH by_product GENERATE group AS product, COUNT(orders) AS num_orders;\nDUMP counts;"
+  },
+  {
+    "id": 18,
+    "title_es": "ORDER con PARALLEL",
+    "title_en": "ORDER with PARALLEL",
+    "description_es": "Ordena sales.csv por amount usando PARALLEL 5.",
+    "description_en": "Sort sales.csv by amount using PARALLEL 5.",
+    "dataset": "sales.csv",
+    "difficulty": 4,
+    "concepts": [
+      "ORDER",
+      "PARALLEL"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_18_expected.txt",
+    "hints_es": [
+      "ORDER ... BY campo PARALLEL n"
+    ],
+    "hints_en": [
+      "ORDER ... BY field PARALLEL n"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Ordena con PARALLEL\nsorted = ORDER sales BY amount DESC PARALLEL 5;\n\nDUMP sorted;"
+  },
+  {
+    "id": 20,
+    "title_es": "Nested FOREACH básico",
+    "title_en": "Basic nested FOREACH",
+    "description_es": "Agrupa orders por user_id y dentro del FOREACH ordena las órdenes por order_date DESC.",
+    "description_en": "Group orders by user_id and within FOREACH sort orders by order_date DESC.",
+    "dataset": "orders.csv",
+    "difficulty": 6,
+    "concepts": [
+      "GROUP",
+      "nested FOREACH",
+      "ORDER"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_20_expected.txt",
+    "hints_es": [
+      "FOREACH grouped { operaciones; GENERATE ... }"
+    ],
+    "hints_en": [
+      "FOREACH grouped { operations; GENERATE ... }"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\nby_user = GROUP orders BY user_id;\n\n-- COMPLETA: Nested FOREACH con ORDER\nresult = FOREACH by_user {\n  sorted_orders = ORDER orders BY order_date DESC;\n  GENERATE group AS user_id, sorted_orders;\n};\n\nDUMP result;"
+  },
+  {
+    "id": 21,
+    "title_es": "Últimas N órdenes por usuario",
+    "title_en": "Last N orders per user",
+    "description_es": "Agrupa orders por user_id, ordena por fecha DESC y toma las 3 más recientes por usuario.",
+    "description_en": "Group orders by user_id, sort by date DESC and take the 3 most recent per user.",
+    "dataset": "orders.csv",
+    "difficulty": 6,
+    "concepts": [
+      "GROUP",
+      "nested FOREACH",
+      "ORDER",
+      "LIMIT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_21_expected.txt",
+    "hints_es": [
+      "Combina ORDER y LIMIT dentro del nested FOREACH"
+    ],
+    "hints_en": [
+      "Combine ORDER and LIMIT inside nested FOREACH"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\nby_user = GROUP orders BY user_id;\n\nresult = FOREACH by_user {\n  sorted = ORDER orders BY order_date DESC;\n  recent = LIMIT sorted 3;\n  GENERATE group AS user_id, recent;\n};\n\nDUMP result;"
+  },
+  {
+    "id": 25,
+    "title_es": "Análisis de logs: Errores por IP",
+    "title_en": "Log analysis: Errors by IP",
+    "description_es": "Carga server-logs.csv, filtra status >= 400, agrupa por ip_address y cuenta errores.",
+    "description_en": "Load server-logs.csv, filter status >= 400, group by ip_address and count errors.",
+    "dataset": "server-logs.csv",
+    "difficulty": 5,
+    "concepts": [
+      "FILTER",
+      "GROUP",
+      "COUNT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_25_expected.txt",
+    "hints_es": [
+      "Filtra status_code >= 400 para errores 4xx y 5xx"
+    ],
+    "hints_en": [
+      "Filter status_code >= 400 for 4xx and 5xx errors"
+    ],
+    "solution_script": "logs = LOAD '/datasets/server-logs.csv' USING PigStorage(',') AS (timestamp:chararray, ip_address:chararray, request_path:chararray, status_code:int, response_time_ms:int);\n\n-- COMPLETA: Filtra errores\nerrors = FILTER logs BY status_code >= 400;\n\n-- COMPLETA: Agrupa por IP y cuenta\nby_ip = GROUP errors BY ip_address;\nerror_counts = FOREACH by_ip GENERATE group AS ip, COUNT(errors) AS num_errors;\n\n-- Ordena por frecuencia\nsorted = ORDER error_counts BY num_errors DESC;\nDUMP sorted;"
+  },
+  {
+    "id": 26,
+    "title_es": "Tiempo de respuesta promedio por ruta",
+    "title_en": "Average response time by path",
+    "description_es": "Agrupa server-logs por request_path y calcula tiempo de respuesta promedio.",
+    "description_en": "Group server-logs by request_path and calculate average response time.",
+    "dataset": "server-logs.csv",
+    "difficulty": 5,
+    "concepts": [
+      "GROUP",
+      "AVG"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_26_expected.txt",
+    "hints_es": [
+      "AVG(bag.campo) calcula el promedio"
+    ],
+    "hints_en": [
+      "AVG(bag.field) calculates the average"
+    ],
+    "solution_script": "logs = LOAD '/datasets/server-logs.csv' USING PigStorage(',') AS (timestamp:chararray, ip_address:chararray, request_path:chararray, status_code:int, response_time_ms:int);\n\nby_path = GROUP logs BY request_path;\navg_times = FOREACH by_path GENERATE group AS path, AVG(logs.response_time_ms) AS avg_response_time;\n\nsorted = ORDER avg_times BY avg_response_time DESC;\nDUMP sorted;"
+  },
+  {
+    "id": 27,
+    "title_es": "Ventas por mes (serie temporal)",
+    "title_en": "Sales by month (time series)",
+    "description_es": "Extrae el mes de sale_date en sales.csv (primeros 7 chars) y agrupa por mes.",
+    "description_en": "Extract month from sale_date in sales.csv (first 7 chars) and group by month.",
+    "dataset": "sales.csv",
+    "difficulty": 6,
+    "concepts": [
+      "SUBSTRING",
+      "GROUP",
+      "SUM"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_27_expected.txt",
+    "hints_es": [
+      "SUBSTRING(str, start, end) extrae subcadena"
+    ],
+    "hints_en": [
+      "SUBSTRING(str, start, end) extracts substring"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Extrae mes (YYYY-MM)\nwith_month = FOREACH sales GENERATE SUBSTRING(sale_date, 0, 7) AS month, amount;\n\n-- COMPLETA: Agrupa por mes y suma\nby_month = GROUP with_month BY month;\nmonthly_totals = FOREACH by_month GENERATE group AS month, SUM(with_month.amount) AS total_sales;\n\nsorted = ORDER monthly_totals BY month;\nDUMP sorted;"
+  },
+  {
+    "id": 30,
+    "title_es": "Pipeline completo: Análisis de ventas por región y categoría",
+    "title_en": "Complete pipeline: Sales analysis by region and category",
+    "description_es": "Agrupa sales.csv por (region, product_category), calcula totales, ordena y toma top 10.",
+    "description_en": "Group sales.csv by (region, product_category), calculate totals, sort and take top 10.",
+    "dataset": "sales.csv",
+    "difficulty": 7,
+    "concepts": [
+      "GROUP",
+      "multiple fields",
+      "SUM",
+      "COUNT",
+      "ORDER",
+      "LIMIT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_30_expected.txt",
+    "hints_es": [
+      "GROUP BY (campo1, campo2) agrupa por múltiples campos",
+      "Usa FLATTEN(group) para expandir la tupla"
+    ],
+    "hints_en": [
+      "GROUP BY (field1, field2) groups by multiple fields",
+      "Use FLATTEN(group) to expand the tuple"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Agrupa por región y categoría\nby_region_category = GROUP sales BY (region, product_category);\n\n-- COMPLETA: Calcula agregaciones\naggregated = FOREACH by_region_category GENERATE \n  FLATTEN(group) AS (region, category),\n  SUM(sales.amount) AS total_sales,\n  COUNT(sales) AS num_transactions,\n  AVG(sales.amount) AS avg_sale;\n\n-- Ordena por total DESC\nsorted = ORDER aggregated BY total_sales DESC;\ntop10 = LIMIT sorted 10;\n\nDUMP top10;"
+  },
+  {
+    "id": 11,
+    "title_es": "UDF - User Defined Function",
+    "title_en": "UDF - User Defined Function",
+    "difficulty": "hard",
+    "concepts": [
+      "UDF",
+      "UPPER"
+    ],
+    "description_es": "Usa funciones UDF para transformar texto a mayúsculas.",
+    "description_en": "Use UDF functions to transform text to uppercase.",
+    "dataset": "users.csv",
+    "initial_script": "-- Carga users\n-- Transforma name a mayúsculas con UPPER\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\ntransformed = FOREACH users GENERATE user_id, UPPER(name) as upper_name, country;\nresult = LIMIT transformed 10;\nDUMP result;",
+    "expected_output_file": "exercise_11_expected.txt",
+    "hints_es": [
+      "UPPER() convierte a mayúsculas",
+      "LOWER() convierte a minúsculas",
+      "Pig tiene muchas funciones built-in"
+    ],
+    "hints_en": [
+      "UPPER() converts to uppercase",
+      "LOWER() converts to lowercase",
+      "Pig has many built-in functions"
+    ]
+  },
+  {
+    "id": 12,
+    "title_es": "FLATTEN - Aplanar Bags",
+    "title_en": "FLATTEN - Flatten Bags",
+    "difficulty": "hard",
+    "concepts": [
+      "FLATTEN",
+      "GROUP"
+    ],
+    "description_es": "Agrupa y luego aplana el resultado para crear filas individuales.",
+    "description_en": "Group and then flatten the result to create individual rows.",
+    "dataset": "orders.csv",
+    "initial_script": "-- Agrupa orders por user_id\n-- Usa FLATTEN para crear filas\n\n-- TODO:Escribe tu solución aquí\n",
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, amount:double, order_date:chararray);\n\ngrouped = GROUP orders BY user_id;\nflattened = FOREACH grouped GENERATE group, FLATTEN(orders.product);\nresult = LIMIT flattened 10;\nDUMP result;",
+    "expected_output_file": "exercise_12_expected.txt",
+    "hints_es": [
+      "FLATTEN desempaqueta bags y tuplas",
+      "Crea una fila por cada elemento",
+      "Muy útil con GROUP"
+    ],
+    "hints_en": [
+      "FLATTEN unpacks bags and tuples",
+      "Creates one row per element",
+      "Very useful with GROUP"
+    ]
+  },
+  {
+    "id": 13,
+    "title_es": "Nested FOREACH",
+    "title_en": "Nested FOREACH",
+    "difficulty": "hard",
+    "concepts": [
+      "Nested FOREACH"
+    ],
+    "description_es": "Operaciones anidadas dentro de FOREACH.",
+    "dataset": "orders.csv",
+    "initial_script": "-- FOREACH anidado\n\n-- TODO\n",
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, amount:double, order_date:chararray);\ngrouped = GROUP orders BY user_id;\nresult = FOREACH grouped {\n  sorted = ORDER orders BY amount DESC;\n  top = LIMIT sorted 2;\n  GENERATE group, top;\n}\nDUMP result;",
+    "hints_es": [
+      "FOREACH puede contener sub-queries",
+      "Operaciones anidad as"
+    ]
+  },
+  {
+    "id": 14,
+    "title_es": "MAPREDUCE Customizado",
+    "title_en": "Custom MAPREDUCE",
+    "difficulty": "hard",
+    "concepts": [
+      "MAPREDUCE",
+      "STREAM"
+    ],
+    "description_es": "Usa streaming con Python/bash.",
+    "dataset": "users.csv",
+    "initial_script": "-- STREAM para procesamiento custom\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nstreamed = STREAM users THROUGH `cat`;\nresult = LIMIT streamed 5;\nDUMP result;",
+    "hints_es": [
+      "STREAM ejecuta comandos externos",
+      "Útil para procesamiento custom"
+    ]
+  },
+  {
+    "id": 15,
+    "title_es": "REGEX_EXTRACT - Expresiones Regulares",
+    "title_en": "REGEX_EXTRACT - Regular Expressions",
+    "difficulty": "hard",
+    "concepts": [
+      "REGEX"
+    ],
+    "description_es": "Extrae patrones con regex.",
+    "dataset": "users.csv",
+    "initial_script": "-- REGEX_EXTRACT\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nresult = FOREACH users GENERATE name, REGEX_EXTRACT(name, '([A-Z][a-z]+)', 1) as first_cap;\nDUMP result;",
+    "hints_es": [
+      "REGEX_EXTRACT(str, pattern, index)"
+    ]
+  },
+  {
+    "id": 16,
+    "title_es": "TOTUPLE - Crear Tuplas Dinámicas",
+    "title_en": "TOTUPLE - Create Dynamic Tuples",
+    "difficulty": "hard",
+    "concepts": [
+      "TOTUPLE"
+    ],
+    "description_es": "Convierte campos en tupla.",
+    "dataset": "users.csv",
+    "initial_script": "-- TOTUPLE crea tuplas\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nresult = FOREACH users GENERATE TOTUPLE(name, age, country) as user_tuple;\nDUMP result;",
+    "hints_es": [
+      "TOTUPLE(...) empaqueta valores"
+    ]
+  },
+  {
+    "id": 17,
+    "title_es": "TOBAG - Crear Bags Dinámicos",
+    "title_en": "TOBAG - Create Dynamic Bags",
+    "difficulty": "hard",
+    "concepts": [
+      "TOBAG"
+    ],
+    "description_es": "Convierte campos en bag.",
+    "dataset": "users.csv",
+    "initial_script": "-- TOBAG crea bags\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nresult = FOREACH users GENERATE TOBAG(name, country) as bag_fields;\nDUMP result;",
+    "hints_es": [
+      "TOBAG crea bag de valores"
+    ]
+  },
+  {
+    "id": 18,
+    "title_es": "BagToTuple - Convertir Bag a Tupla",
+    "title_en": "BagToTuple - Convert Bag to Tuple",
+    "difficulty": "hard",
+    "concepts": [
+      "BagToTuple"
+    ],
+    "description_es": "Transforma bags en tuplas.",
+    "dataset": "orders.csv",
+    "initial_script": "-- Conversión Bag -> Tuple\n\n-- TODO\n",
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, amount:double, order_date:chararray);\ngrouped = GROUP orders BY user_id;\nresult = FOREACH grouped GENERATE group, BagToTuple(orders.product);\nDUMP result;",
+    "hints_es": [
+      "BagToTuple convierte estructura"
+    ]
+  }
+]

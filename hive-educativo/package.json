@@ -1,0 +1,29 @@
+{
+    "name": "hive-educativo",
+    "version": "1.0.0",
+    "description": "Plataforma educativa interactiva para aprender HiveQL (Hadoop Hive)",
+    "main": "server/server.js",
+    "scripts": {
+        "start": "nodemon server/server.js",
+        "dev": "nodemon server/server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "hive",
+        "hiveql",
+        "hadoop",
+        "big-data",
+        "educativo",
+        "aprendizaje"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
+}

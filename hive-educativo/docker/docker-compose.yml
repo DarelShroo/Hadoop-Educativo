@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  hive:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hive-educativo:latest
+    container_name: hive-executor
+    hostname: hive-executor
+    networks:
+      - hive-network
+    volumes:
+      - ./scripts:/scripts
+      - ../datasets:/datasets:ro
+    ports:
+      - "10000:10000" # HiveServer2
+      - "10002:10002" # Hive Web UI
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    command: tail -f /dev/null
+    healthcheck:
+      test: [ "CMD", "hive", "--version" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  hive-network:
+    driver: bridge

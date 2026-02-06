@@ -1,0 +1,31 @@
+{
+  "name": "pig-latin-educativo",
+  "version": "1.0.0",
+  "description": "Educational web platform for learning Apache Pig Latin with real Hadoop execution",
+  "main": "server/server.js",
+  "scripts": {
+    "setup": "node datasets/download_datasets.js && docker compose -f docker/docker-compose.yml up -d",
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "docker:up": "docker compose -f docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f docker/docker-compose.yml down",
+    "docker:logs": "docker compose -f docker/docker-compose.yml logs -f",
+    "download-datasets": "node datasets/download_datasets.js"
+  },
+  "keywords": [
+    "pig-latin",
+    "hadoop",
+    "education",
+    "learning-platform"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

@@ -1,0 +1,446 @@
+[
+  {
+    "id": 1,
+    "title_es": "Join básico usuarios-órdenes",
+    "title_en": "Basic users-orders join",
+    "description_es": "Haz un INNER JOIN entre users.csv y orders.csv usando user_id como clave.",
+    "description_en": "Perform an INNER JOIN between users.csv and orders.csv using user_id as key.",
+    "dataset": "users.csv,orders.csv",
+    "difficulty": 3,
+    "concepts": [
+      "JOIN",
+      "INNER"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_01_expected.txt",
+    "hints_es": [
+      "JOIN relacion1 BY campo, relacion2 BY campo"
+    ],
+    "hints_en": [
+      "JOIN relation1 BY field, relation2 BY field"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\norders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Join users y orders\njoined = JOIN users BY user_id, orders BY user_id;\n\nDUMP joined;"
+  },
+  {
+    "id": 2,
+    "title_es": "Proyectar después de join",
+    "title_en": "Project after join",
+    "description_es": "Haz join de users y orders, luego proyecta solo name, product y quantity.",
+    "description_en": "Join users and orders, then project only name, product and quantity.",
+    "dataset": "users.csv,orders.csv",
+    "difficulty": 3,
+    "concepts": [
+      "JOIN",
+      "FOREACH",
+      "GENERATE"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_02_expected.txt",
+    "hints_es": [
+      "Usa tabla::campo para desambiguar después de JOIN"
+    ],
+    "hints_en": [
+      "Use table::field to disambiguate after JOIN"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\norders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\njoined = JOIN users BY user_id, orders BY user_id;\n\n-- COMPLETA: Proyecta name, product, quantity\nresult = FOREACH joined GENERATE users::name, orders::product, orders::quantity;\n\nDUMP result;"
+  },
+  {
+    "id": 3,
+    "title_es": "LEFT OUTER JOIN",
+    "title_en": "LEFT OUTER JOIN",
+    "description_es": "Haz un LEFT OUTER JOIN de users con orders para incluir usuarios sin órdenes.",
+    "description_en": "Perform a LEFT OUTER JOIN of users with orders to include users without orders.",
+    "dataset": "users.csv,orders.csv",
+    "difficulty": 4,
+    "concepts": [
+      "JOIN",
+      "LEFT OUTER"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_03_expected.txt",
+    "hints_es": [
+      "JOIN tabla1 BY campo LEFT OUTER, tabla2 BY campo"
+    ],
+    "hints_en": [
+      "JOIN table1 BY field LEFT OUTER, table2 BY field"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\norders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: LEFT OUTER JOIN\njoined = JOIN users BY user_id LEFT OUTER, orders BY user_id;\n\nDUMP joined;"
+  },
+  {
+    "id": 4,
+    "title_es": "Join productos con órdenes",
+    "title_en": "Join products with orders",
+    "description_es": "Join products.csv con orders.csv usando product_name/product como clave.",
+    "description_en": "Join products.csv with orders.csv using product_name/product as key.",
+    "dataset": "products.csv,orders.csv",
+    "difficulty": 3,
+    "concepts": [
+      "JOIN"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_04_expected.txt",
+    "hints_es": [
+      "Las claves de join deben coincidir en valor"
+    ],
+    "hints_en": [
+      "Join keys must match in value"
+    ],
+    "solution_script": "products = LOAD '/datasets/products.csv' USING PigStorage(',') AS (product_name:chararray, category:chararray, price:float, brand:chararray);\norders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Join por nombre de producto\njoined = JOIN products BY product_name, orders BY product;\n\nDUMP joined;"
+  },
+  {
+    "id": 13,
+    "title_es": "Contar usuarios por país",
+    "title_en": "Count users by country",
+    "description_es": "Agrupa users.csv por país y cuenta cuántos usuarios hay en cada país.",
+    "description_en": "Group users.csv by country and count how many users in each country.",
+    "dataset": "users.csv",
+    "difficulty": 3,
+    "concepts": [
+      "GROUP",
+      "COUNT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_13_expected.txt",
+    "hints_es": [
+      "GROUP relacion BY campo, luego COUNT(relacion)"
+    ],
+    "hints_en": [
+      "GROUP relation BY field, then COUNT(relation)"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Agrupa por país\nby_country = GROUP users BY country;\n\n-- COMPLETA: Cuenta usuarios\ncounts = FOREACH by_country GENERATE group AS country, COUNT(users) AS total;\n\nDUMP counts;"
+  },
+  {
+    "id": 14,
+    "title_es": "Suma total de ventas por región",
+    "title_en": "Total sales sum by region",
+    "description_es": "Agrupa sales.csv por región y suma el amount total.",
+    "description_en": "Group sales.csv by region and sum the total amount.",
+    "dataset": "sales.csv",
+    "difficulty": 3,
+    "concepts": [
+      "GROUP",
+      "SUM"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_14_expected.txt",
+    "hints_es": [
+      "SUM(bag.campo) suma valores de un campo"
+    ],
+    "hints_en": [
+      "SUM(bag.field) sums values of a field"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Agrupa y suma\nby_region = GROUP sales BY region;\ntotals = FOREACH by_region GENERATE group AS region, SUM(sales.amount) AS total_sales;\n\nDUMP totals;"
+  },
+  {
+    "id": 15,
+    "title_es": "Promedio de edad por país",
+    "title_en": "Average age by country",
+    "description_es": "Agrupa users.csv por país y calcula la edad promedio.",
+    "description_en": "Group users.csv by country and calculate average age.",
+    "dataset": "users.csv",
+    "difficulty": 3,
+    "concepts": [
+      "GROUP",
+      "AVG"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_15_expected.txt",
+    "hints_es": [
+      "AVG(bag.campo) calcula promedio"
+    ],
+    "hints_en": [
+      "AVG(bag.field) calculates average"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Promedio de edad por país\nby_country = GROUP users BY country;\navgs = FOREACH by_country GENERATE group AS country, AVG(users.age) AS avg_age;\n\nDUMP avgs;"
+  },
+  {
+    "id": 16,
+    "title_es": "Valores min y max",
+    "title_en": "Min and max values",
+    "description_es": "Agrupa sales.csv por región y encuentra el amount mínimo y máximo.",
+    "description_en": "Group sales.csv by region and find minimum and maximum amount.",
+    "dataset": "sales.csv",
+    "difficulty": 3,
+    "concepts": [
+      "GROUP",
+      "MIN",
+      "MAX"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_16_expected.txt",
+    "hints_es": [
+      "MIN() y MAX() encuentran valores extremos"
+    ],
+    "hints_en": [
+      "MIN() and MAX() find extreme values"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\nby_region = GROUP sales BY region;\nstats = FOREACH by_region GENERATE group AS region, MIN(sales.amount) AS min_sale, MAX(sales.amount) AS max_sale;\n\nDUMP stats;"
+  },
+  {
+    "id": 25,
+    "title_es": "Convertir nombres a mayúsculas",
+    "title_en": "Convert names to uppercase",
+    "description_es": "Carga users.csv y convierte todos los nombres a mayúsculas usando UPPER().",
+    "description_en": "Load users.csv and convert all names to uppercase using UPPER().",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "FOREACH",
+      "UPPER"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_25_expected.txt",
+    "hints_es": [
+      "UPPER(campo) convierte a mayúsculas"
+    ],
+    "hints_en": [
+      "UPPER(field) converts to uppercase"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Convierte a mayúsculas\nupper_names = FOREACH users GENERATE user_id, UPPER(name) AS name_upper, age, country;\n\nDUMP upper_names;"
+  },
+  {
+    "id": 26,
+    "title_es": "Concatenar campos",
+    "title_en": "Concatenate fields",
+    "description_es": "Carga users.csv y crea un campo 'full_info' concatenando name y country con ' - '.",
+    "description_en": "Load users.csv and create a 'full_info' field by concatenating name and country with ' - '.",
+    "dataset": "users.csv",
+    "difficulty": 2,
+    "concepts": [
+      "FOREACH",
+      "CONCAT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_26_expected.txt",
+    "hints_es": [
+      "CONCAT(str1, str2, ...) une strings"
+    ],
+    "hints_en": [
+      "CONCAT(str1, str2, ...) joins strings"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Concatena name y country\ninfo = FOREACH users GENERATE CONCAT(name, ' - ', country) AS full_info;\n\nDUMP info;"
+  },
+  {
+    "id": 27,
+    "title_es": "Redondear precios",
+    "title_en": "Round prices",
+    "description_es": "Carga sales.csv y redondea los valores de amount usando ROUND().",
+    "description_en": "Load sales.csv and round amount values using ROUND().",
+    "dataset": "sales.csv",
+    "difficulty": 2,
+    "concepts": [
+      "FOREACH",
+      "ROUND"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_27_expected.txt",
+    "hints_es": [
+      "ROUND(numero) redondea al entero más cercano"
+    ],
+    "hints_en": [
+      "ROUND(number) rounds to nearest integer"
+    ],
+    "solution_script": "sales = LOAD '/datasets/sales.csv' USING PigStorage(',') AS (sale_id:int, region:chararray, product_category:chararray, amount:float, sale_date:chararray);\n\n-- COMPLETA: Redondea amount\nrounded = FOREACH sales GENERATE sale_id, region, ROUND(amount) AS amount_rounded;\n\nDUMP rounded;"
+  },
+  {
+    "id": 33,
+    "title_es": "Dividir usuarios por edad con SPLIT",
+    "title_en": "Split users by age with SPLIT",
+    "description_es": "Usa SPLIT para dividir users.csv en young (age < 30) y old (age >= 30).",
+    "description_en": "Use SPLIT to divide users.csv into young (age < 30) and old (age >= 30).",
+    "dataset": "users.csv",
+    "difficulty": 4,
+    "concepts": [
+      "SPLIT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_33_expected.txt",
+    "hints_es": [
+      "SPLIT relacion INTO r1 IF cond1, r2 IF cond2"
+    ],
+    "hints_en": [
+      "SPLIT relation INTO r1 IF cond1, r2 IF cond2"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\n-- COMPLETA: Split en young y old\nSPLIT users INTO\n  young IF age < 30,\n  old IF age >= 30;\n\nDUMP young;"
+  },
+  {
+    "id": 34,
+    "title_es": "Unir dos datasets con UNION",
+    "title_en": "Combine two datasets with UNION",
+    "description_es": "Carga users.csv dos veces, filtra por diferentes países y une con UNION.",
+    "description_en": "Load users.csv twice, filter by different countries and combine with UNION.",
+    "dataset": "users.csv",
+    "difficulty": 3,
+    "concepts": [
+      "UNION"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_34_expected.txt",
+    "hints_es": [
+      "UNION relacion1, relacion2 combina tuplas"
+    ],
+    "hints_en": [
+      "UNION relation1, relation2 combines tuples"
+    ],
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\nusa = FILTER users BY country == 'USA';\ncanada = FILTER users BY country == 'Canada';\n\n-- COMPLETA: Une ambas relaciones\ncombined = UNION usa, canada;\n\nDUMP combined;"
+  },
+  {
+    "id": 40,
+    "title_es": "Query completa: Top productos por revenue",
+    "title_en": "Complete query: Top products by revenue",
+    "description_es": "Agrupa orders.csv por producto, calcula revenue (quantity * price), ordena DESC y toma top 5.",
+    "description_en": "Group orders.csv by product, calculate revenue (quantity * price), sort DESC and take top 5.",
+    "dataset": "orders.csv",
+    "difficulty": 5,
+    "concepts": [
+      "GROUP",
+      "SUM",
+      "ORDER",
+      "LIMIT"
+    ],
+    "initial_script": "\n\n-- TODO: Escribe tu solución aquí\n",
+    "expected_output_file": "exercise_40_expected.txt",
+    "hints_es": [
+      "Combina GROUP, SUM, ORDER y LIMIT"
+    ],
+    "hints_en": [
+      "Combine GROUP, SUM, ORDER and LIMIT"
+    ],
+    "solution_script": "orders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float, order_date:chararray);\n\n-- COMPLETA: Agrupa por producto\nby_product = GROUP orders BY product;\n\n-- COMPLETA: Calcula revenue total\nrevenues = FOREACH by_product GENERATE group AS product, SUM(orders.quantity * orders.price) AS total_revenue;\n\n-- COMPLETA: Ordena y toma top 5\nsorted = ORDER revenues BY total_revenue DESC;\ntop5 = LIMIT sorted 5;\n\nDUMP top5;"
+  },
+  {
+    "id": 15,
+    "title_es": "COGROUP - Agrupar Múltiples Relaciones",
+    "title_en": "COGROUP - Group Multiple Relations",
+    "difficulty": "medium",
+    "concepts": [
+      "COGROUP"
+    ],
+    "description_es": "Usa COGROUP para agrupar users y orders juntos por user_id.",
+    "description_en": "Use COGROUP to group users and orders together by user_id.",
+    "dataset": "users.csv, orders.csv",
+    "initial_script": "-- Carga ambos datasets\n-- Usa COGROUP para agruparlos\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\norders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, amount:double, order_date:chararray);\n\ncogrp = COGROUP users BY user_id, orders BY user_id;\nresult = FOREACH cogrp GENERATE group, COUNT(users), COUNT(orders);\nDUMP result;",
+    "expected_output_file": "exercise_15_expected.txt",
+    "hints_es": [
+      "COGROUP crea bags para cada grupo",
+      "Sintaxis: COGROUP rel1 BY col1, rel2 BY col2",
+      "Útil para comparar conjuntos de datos"
+    ],
+    "hints_en": [
+      "COGROUP creates bags for each group",
+      "Syntax: COGROUP rel1 BY col1, rel2 BY col2",
+      "Useful for comparing datasets"
+    ]
+  },
+  {
+    "id": 16,
+    "title_es": "CROSS - Producto Cartesiano",
+    "title_en": "CROSS - Cartesian Product",
+    "difficulty": "medium",
+    "concepts": [
+      "CROSS"
+    ],
+    "description_es": "Genera todas las combinaciones posibles entre 2 conjuntos pequeños.",
+    "description_en": "Generate all possible combinations between 2 small sets.",
+    "dataset": "users.csv",
+    "initial_script": "-- Carga dos subconjuntos pequeños\n-- Usa CROSS para combinarlos\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\n\nset1 = LIMIT users 3;\nset2 = LIMIT users 2;\n\ncrossed = CROSS set1, set2;\nDUMP crossed;",
+    "expected_output_file": "exercise_16_expected.txt",
+    "hints_es": [
+      "CROSS genera el producto cartesiano",
+      "¡Cuidado! Crece exponencialmente",
+      "Solo con conjuntos pequeños"
+    ],
+    "hints_en": [
+      "CROSS generates cartesian product",
+      "Careful! Grows exponentially",
+      "Only with small sets"
+    ]
+  },
+  {
+    "id": 17,
+    "title_es": "REPLICATE en JOIN",
+    "title_en": "REPLICATE in JOIN",
+    "difficulty": "medium",
+    "concepts": [
+      "JOIN",
+      "REPLICATE"
+    ],
+    "description_es": "JOIN optimizado con tabla pequeña replicada.",
+    "dataset": "users.csv, orders.csv",
+    "initial_script": "-- JOIN con hint REPLICATE\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\norders = LOAD '/datasets/orders.csv' USING PigStorage(',') AS (order_id:int, user_id:int, product:chararray, amount:double, order_date:chararray);\njoined = JOIN users BY user_id, orders BY user_id USING 'replicated';\nresult = LIMIT joined 10;\nDUMP result;",
+    "hints_es": [
+      "USING 'replicated' optimiza joins",
+      "Tabla pequeña en memoria"
+    ]
+  },
+  {
+    "id": 18,
+    "title_es": "RANK - Ranking Manual",
+    "title_en": "RANK - Manual Ranking",
+    "difficulty": "medium",
+    "concepts": [
+      "RANK"
+    ],
+    "description_es": "Asigna ranks a usuarios por edad.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa RANK BY\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nordered = ORDER users BY age DESC;\nranked = RANK ordered;\nresult = FOREACH ranked GENERATE rank_ordered, name, age;\nDUMP result;",
+    "hints_es": [
+      "RANK asigna posición",
+      "Usa después de ORDER"
+    ]
+  },
+  {
+    "id": 19,
+    "title_es": "CUBE/ROLLUP - Agregaciones Múltiples",
+    "title_en": "CUBE/ROLLUP - Multiple Aggregations",
+    "difficulty": "medium",
+    "concepts": [
+      "GROUP",
+      "CUBE"
+    ],
+    "description_es": "Genera subtotales por país y edad.",
+    "dataset": "users.csv",
+    "initial_script": "-- GROUP con CUBE\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\ngrouped = GROUP users BY (country, age);\nresult = FOREACH grouped GENERATE FLATTEN(group), COUNT(users);\nDUMP result;",
+    "hints_es": [
+      "CUBE genera todas las combinaciones"
+    ]
+  },
+  {
+    "id": 20,
+    "title_es": "SUBSTRING con FOREACH",
+    "title_en": "SUBSTRING with FOREACH",
+    "difficulty": "medium",
+    "concepts": [
+      "SUBSTRING",
+      "FOREACH"
+    ],
+    "description_es": "Extrae primeras 3 letras del nombre.",
+    "dataset": "users.csv",
+    "initial_script": "-- SUBSTRING en proyección\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nresult = FOREACH users GENERATE name, SUBSTRING(name, 0, 3) as prefix;\nDUMP result;",
+    "hints_es": [
+      "SUBSTRING(str, start, end)"
+    ]
+  },
+  {
+    "id": 21,
+    "title_es": "CONCAT - Concatenar Campos",
+    "title_en": "CONCAT - Concatenate Fields",
+    "difficulty": "medium",
+    "concepts": [
+      "CONCAT"
+    ],
+    "description_es": "Une nombre y país con separador.",
+    "dataset": "users.csv",
+    "initial_script": "-- CONCAT campos\n\n-- TODO\n",
+    "solution_script": "users = LOAD '/datasets/users.csv' USING PigStorage(',') AS (user_id:int, name:chararray, age:int, country:chararray, signup_date:chararray);\nresult = FOREACH users GENERATE CONCAT(CONCAT(name, ' from '), country) as description;\nDUMP result;",
+    "hints_es": [
+      "CONCAT(str1, str2)"
+    ]
+  }
+]

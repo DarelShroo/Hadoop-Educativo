@@ -1,0 +1,5 @@
+(,name,,country,signup_date)
+(1,Bob1,21,UK,2024-02-01)
+(2,Carlos2,22,Canada,2024-03-01)
+(3,Diana3,23,Spain,2024-04-01)
+(4,Elena4,24,Mexico,2024-05-01)

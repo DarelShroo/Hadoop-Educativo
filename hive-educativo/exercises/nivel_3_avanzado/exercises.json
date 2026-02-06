@@ -1,0 +1,158 @@
+[
+  {
+    "id": 1,
+    "title_es": "Subconsulta en WHERE",
+    "title_en": "Subquery in WHERE",
+    "difficulty": "hard",
+    "concepts": [
+      "Subquery",
+      "IN"
+    ],
+    "description_es": "Encuentra usuarios que han hecho órdenes usando una subconsulta.",
+    "description_en": "Find users who have made orders using a subquery.",
+    "dataset": "users.csv, orders.csv",
+    "initial_script": "-- Usa una subconsulta en WHERE con IN\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nCREATE EXTERNAL TABLE IF NOT EXISTS orders (\n  order_id INT,\n  user_id INT,\n  product STRING,\n  amount DOUBLE,\n  order_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name FROM users\nWHERE user_id IN (SELECT user_id FROM orders);",
+    "expected_output_file": "exercise_01_expected.txt",
+    "hints_es": [
+      "La subconsulta va entre paréntesis",
+      "Usa IN para verificar membresía",
+      "Alternativa: usar JOIN"
+    ],
+    "hints_en": [
+      "Subquery goes in parentheses",
+      "Use IN to check membership",
+      "Alternative: use JOIN"
+    ]
+  },
+  {
+    "id": 2,
+    "title_es": "CASE WHEN - Lógica Condicional",
+    "title_en": "CASE WHEN - Conditional Logic",
+    "difficulty": "hard",
+    "concepts": [
+      "CASE",
+      "WHEN"
+    ],
+    "description_es": "Clasifica usuarios en grupos de edad (Joven, Adulto, Senior).",
+    "description_en": "Classify users into age groups (Young, Adult, Senior).",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa CASE WHEN para crear categorías\n\n-- TODO: Escribe tu solución aquí\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (\n  user_id INT,\n  name STRING,\n  age INT,\n  country STRING,\n  signup_date STRING\n)\nROW FORMAT DELIMITED FIELDS TERMINATED BY ','\nSTORED AS TEXTFILE LOCATION '/datasets/'\nTBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name, age,\n  CASE\n    WHEN age < 25 THEN 'Joven'\n    WHEN age BETWEEN 25 AND 40 THEN 'Adulto'\n    ELSE 'Senior'\n  END as age_group\nFROM users;",
+    "expected_output_file": "exercise_02_expected.txt",
+    "hints_es": [
+      "CASE evalúa condiciones en orden",
+      "WHEN especifica la condición",
+      "ELSE es opcional pero recomendado"
+    ],
+    "hints_en": [
+      "CASE evaluates conditions in order",
+      "WHEN specifies the condition",
+      "ELSE is optional but recommended"
+    ]
+  },
+  {
+    "id": 3,
+    "title_es": "WITH (CTE) - Common Table Expression",
+    "title_en": "WITH (CTE) - Common Table Expression",
+    "difficulty": "hard",
+    "concepts": [
+      "WITH",
+      "CTE"
+    ],
+    "description_es": "Usa WITH para crear una tabla temporal y luego consultarla.",
+    "dataset": "users.csv",
+    "initial_script": "-- Define CTE con WITH\n\n-- TODO\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (user_id INT, name STRING, age INT, country STRING, signup_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\n\nWITH young_users AS (\n  SELECT * FROM users WHERE age < 25\n)\nSELECT country, COUNT(*) FROM young_users GROUP BY country;",
+    "hints_es": [
+      "WITH define subconsulta nombrada",
+      "Útil para queries complejas"
+    ]
+  },
+  {
+    "id": 4,
+    "title_es": "EXISTS - Verificar Existencia",
+    "title_en": "EXISTS - Check Existence",
+    "difficulty": "hard",
+    "concepts": [
+      "EXISTS"
+    ],
+    "description_es": "Encuentra usuarios que tienen al menos una orden usando EXISTS.",
+    "dataset": "users.csv, orders.csv",
+    "initial_script": "-- Usa EXISTS en subconsulta\n\n-- TODO\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (user_id INT, name STRING, age INT, country STRING, signup_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\nCREATE EXTERNAL TABLE IF NOT EXISTS orders (order_id INT, user_id INT, product STRING, amount DOUBLE, order_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name FROM users u WHERE EXISTS (\n  SELECT 1 FROM orders o WHERE o.user_id = u.user_id\n);",
+    "hints_es": [
+      "EXISTS devuelve true/false",
+      "Más eficiente que IN a veces"
+    ]
+  },
+  {
+    "id": 5,
+    "title_es": "RANK - Ranking de Filas",
+    "title_en": "RANK - Row Ranking",
+    "difficulty": "hard",
+    "concepts": [
+      "RANK",
+      "OVER"
+    ],
+    "description_es": "Rankea usuarios por edad dentro de cada país.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa RANK() OVER()\n\n-- TODO\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (user_id INT, name STRING, age INT, country STRING, signup_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name, country, age,\n  RANK() OVER (PARTITION BY country ORDER BY age DESC) as age_rank\nFROM users;",
+    "hints_es": [
+      "RANK() es una window function",
+      "PARTITION BY divide grupos"
+    ]
+  },
+  {
+    "id": 6,
+    "title_es": "ROW_NUMBER - Numeración de Filas",
+    "title_en": "ROW_NUMBER - Row Numbering",
+    "difficulty": "hard",
+    "concepts": [
+      "ROW_NUMBER"
+    ],
+    "description_es": "Asigna un número único a cada fila por país.",
+    "dataset": "users.csv",
+    "initial_script": "-- ROW_NUMBER() OVER()\n\n-- TODO\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (user_id INT, name STRING, age INT, country STRING, signup_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name, country,\n  ROW_NUMBER() OVER (PARTITION BY country ORDER BY name) as row_num\nFROM users;",
+    "hints_es": [
+      "ROW_NUMBER siempre único",
+      "Diferente de RANK"
+    ]
+  },
+  {
+    "id": 7,
+    "title_es": "LEAD/LAG - Acceder Filas Anteriores/Siguientes",
+    "title_en": "LEAD/LAG - Access Previous/Next Rows",
+    "difficulty": "hard",
+    "concepts": [
+      "LAG"
+    ],
+    "description_es": "Para cada usuario, muestra el nombre del usuario anterior en el mismo país.",
+    "dataset": "users.csv",
+    "initial_script": "-- Usa LAG() para fila anterior\n\n-- TODO\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (user_id INT, name STRING, age INT, country STRING, signup_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name, country,\n  LAG(name, 1) OVER (PARTITION BY country ORDER BY user_id) as prev_user\nFROM users;",
+    "hints_es": [
+      "LAG accede fila anterior",
+      "LEAD accede siguiente"
+    ]
+  },
+  {
+    "id": 8,
+    "title_es": "DENSE_RANK - Ranking Denso",
+    "title_en": "DENSE_RANK - Dense Ranking",
+    "difficulty": "hard",
+    "concepts": [
+      "DENSE_RANK"
+    ],
+    "description_es": "Ranking sin gaps en los números.",
+    "dataset": "users.csv",
+    "initial_script": "-- DENSE_RANK() vs RANK()\n\n-- TODO\n",
+    "solution_script": "CREATE EXTERNAL TABLE IF NOT EXISTS users (user_id INT, name STRING, age INT, country STRING, signup_date STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' STORED AS TEXTFILE LOCATION '/datasets/' TBLPROPERTIES ('skip.header.line.count'='1');\n\nSELECT name, age,\n  DENSE_RANK() OVER (ORDER BY age DESC) as dense_rank\nFROM users;",
+    "hints_es": [
+      "DENSE_RANK no salta números",
+      "1,2,2,3 vs RANK: 1,2,2,4"
+    ]
+  }
+]

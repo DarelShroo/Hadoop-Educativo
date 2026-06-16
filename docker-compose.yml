@@ -1,0 +1,129 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # HIVE EDUCATIVO
+  # ==========================================
+  hive:
+    profiles:
+      - hive
+    build:
+      context: ./hive-educativo/docker
+      dockerfile: Dockerfile
+    image: hive-educativo:latest
+    container_name: hive-executor
+    hostname: hive-executor
+    networks:
+      - hive-network
+    volumes:
+      - ./hive-educativo/docker/scripts:/scripts:rw
+      - ./hive-educativo/datasets:/datasets:ro
+    ports:
+      - "10000:10000" # HiveServer2
+      - "10002:10002" # Hive Web UI
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    command: tail -f /dev/null
+    healthcheck:
+      test: [ "CMD", "hive", "--version" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  hive-web:
+    profiles:
+      - hive
+    build:
+      context: ./hive-educativo
+      dockerfile: Dockerfile.web
+    container_name: hive-web
+    ports:
+      - "3001:3001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./hive-educativo/docker/scripts:/app/docker/scripts:rw
+      - ./hive-educativo/server:/app/server:rw
+      - ./hive-educativo/public:/app/public:rw
+    environment:
+      - PORT=3001
+      - DOCKER_CONTAINER_NAME=hive-executor
+    networks:
+      - hive-network
+    depends_on:
+      hive:
+        condition: service_healthy
+
+  # ==========================================
+  # PIG LATIN EDUCATIVO
+  # ==========================================
+  pig:
+    profiles:
+      - pig
+    build:
+      context: ./pig-latin-educativo/docker
+      dockerfile: Dockerfile
+    image: pig-latin-educativo:latest
+    container_name: hadoop-pig-executor
+    hostname: hadoop-pig-executor
+    networks:
+      - pig-network
+    ports:
+      - "9870:9870" # NameNode Web UI
+      - "8088:8088" # ResourceManager Web UI
+    volumes:
+      - ./pig-latin-educativo/datasets:/datasets:ro
+      - ./pig-latin-educativo/exercises:/exercises:ro
+      - ./pig-latin-educativo/docker/scripts:/scripts:rw
+    environment:
+      - HADOOP_USER_NAME=hadoop
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+    command: tail -f /dev/null
+    healthcheck:
+      test: [ "CMD", "pig", "-version" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  pig-web:
+    profiles:
+      - pig
+    build:
+      context: ./pig-latin-educativo
+      dockerfile: Dockerfile.web
+    container_name: pig-latin-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./pig-latin-educativo/docker/scripts:/app/docker/scripts:rw
+      - ./pig-latin-educativo/server:/app/server:rw
+      - ./pig-latin-educativo/public:/app/public:rw
+    environment:
+      - PORT=3000
+      - DOCKER_CONTAINER_NAME=hadoop-pig-executor
+    networks:
+      - pig-network
+    depends_on:
+      pig:
+        condition: service_healthy
+
+networks:
+  hive-network:
+    driver: bridge
+  pig-network:
+    driver: bridge

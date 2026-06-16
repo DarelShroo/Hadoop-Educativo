@@ -1,233 +1,72 @@
-# Nivel 2: Intermedio - Operaciones Avanzadas
+# Nivel 2: Intermedio - Operaciones Relacionales en Pig Latin
 
-## 📚 Teoría
+En este nivel aprenderás cómo combinar múltiples flujos de datos y realizar cálculos complejos o agrupaciones. Asegúrate de leer estos conceptos antes de avanzar a los ejercicios.
 
-### Operaciones de Agregación y Agrupamiento
+## 1. Uniones de Relaciones (JOIN)
+Pig Latin permite hacer joins de manera muy similar a SQL, pero recuerda que es un paso en el pipeline de datos.
 
-A este nivel, trabajarás con operaciones más complejas que involucran joins, agrupaciones y funciones integradas.
+- **`INNER JOIN`**: Retiene las filas donde la clave de cruce coincide en ambas relaciones.
+  ```pig
+  joined = JOIN users BY user_id, orders BY user_id;
+  ```
+  *Nota sobre la proyección:* Después de un JOIN, los campos mantienen el prefijo de la relación de la que provienen para evitar colisiones. Para accederlos, usa `relacion::campo`. Por ejemplo: `users::name`.
 
-### Conceptos Clave
+- **`LEFT OUTER JOIN`**: Retiene todos los registros de la relación izquierda y añade los de la derecha si existen; si no existen, los rellena con nulos.
+  ```pig
+  joined = JOIN users BY user_id LEFT OUTER, orders BY user_id;
+  ```
 
-#### 1. GROUP BY - Agrupar Datos
+- **Replicated JOIN**: Si sabes que la relación derecha es tan pequeña que cabe completamente en la memoria RAM, puedes forzar a Pig a cargarla en memoria para acelerar el cruce brutalmente usando el hint `USING 'replicated'`.
+  ```pig
+  joined = JOIN users BY user_id, orders BY user_id USING 'replicated';
+  ```
 
+## 2. Producto Cartesiano (CROSS)
+Genera todas las combinaciones posibles de las filas de dos relaciones.
+⚠️ *Precaución: El tamaño del resultado será el tamaño de `tabla1` multiplicado por el tamaño de `tabla2`. Úsalo solo en conjuntos muy pequeños.*
 ```pig
--- Agrupar por una columna
-grouped = GROUP users BY country;
-
--- El resultado es: (country, {bag of all tuples with that country})
--- grouped: {group: chararray, users: {(user_id, name, age, country)}}
-
--- Contar por grupo
-counts = FOREACH grouped GENERATE group AS country, COUNT(users) AS num_users;
+cruzado = CROSS tabla_pequena_1, tabla_pequena_2;
 ```
 
-**Funciones de agregación**:
-- `COUNT()`: Contar tuplas
-- `SUM()`: Sumar valores
-- `AVG()`: Promedio
-- `MIN()`: Mínimo
-- `MAX()`: Máximo
+## 3. Agrupación (GROUP y COGROUP)
+Ya vimos `GROUP` brevemente, pero es el corazón de las agregaciones en Pig. 
+- **`GROUP`**: Agrupa una sola relación por una o varias claves.
+  ```pig
+  agrupado = GROUP users BY country;
+  ```
+  Esto devuelve tuplas con la estructura `(clave, {bag_con_filas})`. La clave siempre se denomina `group`.
 
-#### 2. JOIN - Combinar Relaciones
+- **`COGROUP`**: Agrupa dos o más relaciones simultáneamente por una clave común.
+  ```pig
+  cogrp = COGROUP users BY user_id, orders BY user_id;
+  ```
+  El resultado tendrá una estructura `(clave, {bag_users}, {bag_orders})`. Es una herramienta muy potente para agrupar antes de aplicar lógica manual en lugar de usar un JOIN plano.
 
-```pig
--- INNER JOIN (solo coincidencias)
-joined = JOIN users BY user_id, orders BY user_id;
-
--- LEFT OUTER JOIN (todas las filas de la izquierda)
-left_join = JOIN users BY user_id LEFT OUTER, orders BY user_id;
-
--- RIGHT OUTER JOIN
-right_join = JOIN users BY user_id RIGHT OUTER, orders BY user_id;
-
--- FULL OUTER JOIN (todas las filas de ambas)
-full_join = JOIN users BY user_id FULL OUTER, orders BY user_id;
-
--- Join múltiple
-multi = JOIN users BY user_id, orders BY user_id, products BY product_id;
-```
-
-#### 3. COGROUP - Agrupar Múltiples Relaciones
+## 4. Agregaciones Matemáticas
+Después de agrupar, a menudo queremos reducir esos "bags" a números.
+- `COUNT(bag)`: Cuenta los elementos en un bag.
+- `SUM(bag.campo)`: Suma los valores numéricos.
+- `AVG(bag.campo)`: Calcula el promedio.
+- `MIN(bag.campo)` / `MAX(bag.campo)`: Extrae los extremos.
 
 ```pig
--- Similar a GROUP pero para múltiples relaciones
-cogrouped = COGROUP users BY user_id, orders BY user_id;
-
--- Resultado: (user_id, {bag of users}, {bag of orders})
+resultado = FOREACH agrupado GENERATE group AS pais, COUNT(users) AS total;
 ```
 
-#### 4. Funciones Integradas
-
-**String Functions**:
+## 5. Ranking Manual (RANK)
+Aunque puedes ordenar con `ORDER`, la función `RANK` enumera directamente las filas según su posición.
 ```pig
--- UPPER/LOWER
-upper_names = FOREACH users GENERATE UPPER(name) AS name_upper;
-
--- SUBSTRING(string, startIndex, endIndex)
-initials = FOREACH users GENERATE SUBSTRING(name, 0, 1) AS initial;
-
--- CONCAT
-full_info = FOREACH users GENERATE CONCAT(name, ' - ', country) AS info;
-
--- TRIM, LTRIM, RTRIM
-cleaned = FOREACH data GENERATE TRIM(field) AS clean_field;
+ordenados = ORDER users BY age DESC;
+rankeados = RANK ordenados;
 ```
+El campo agregado se llamará automáticamente `rank_ordenados`.
 
-**Math Functions**:
-```pig
--- ROUND, CEIL, FLOOR
-rounded = FOREACH sales GENERATE ROUND(amount) AS rounded_amount;
-
--- ABS
-absolute = FOREACH data GENERATE ABS(value) AS abs_value;
-```
-
-**Collection Functions**:
-```pig
--- SIZE: Tamaño de bag/map/tuple
-sizes = FOREACH grouped GENERATE group, SIZE(users) AS count;
-
--- IsEmpty: Verificar si está vacío
-non_empty = FILTER data BY NOT IsEmpty(field);
-```
-
-#### 5. SPLIT - Dividir en Múltiples Relaciones
-
-```pig
--- Divide una relación en varias basadas en condiciones
-SPLIT users INTO
-  young IF age < 30,
-  middle IF age >= 30 AND age < 50,
-  senior IF age >= 50;
-```
-
-#### 6. UNION - Combinar Relaciones
-
-```pig
--- Combina dos relaciones (deben tener mismo esquema)
-all_data = UNION table1, table2;
-```
-
-#### 7. FLATTEN - Aplanar Bags
-
-```pig
--- Convierte bag en tuplas individuales
-grouped = GROUP orders BY user_id;
-flattened = FOREACH grouped GENERATE FLATTEN(orders);
-```
-
-## 📖 Ejemplos Completos
-
-### Ejemplo 1: Contar Usuarios por País
-
-```pig
-users = LOAD 'users.csv' USING PigStorage(',') 
-        AS (user_id:int, name:chararray, age:int, country:chararray);
-
--- Agrupar por país
-by_country = GROUP users BY country;
-
--- Contar
-counts = FOREACH by_country GENERATE group AS country, COUNT(users) AS total;
-
--- Ordenar
-sorted = ORDER counts BY total DESC;
-
-DUMP sorted;
-```
-
-### Ejemplo 2: Join de Usuarios y Órdenes
-
-```pig
-users = LOAD 'users.csv' USING PigStorage(',') 
-        AS (user_id:int, name:chararray, age:int, country:chararray);
-        
-orders = LOAD 'orders.csv' USING PigStorage(',')
-         AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float);
-
--- Join
-user_orders = JOIN users BY user_id, orders BY user_id;
-
--- Proyectar campos relevantes
-result = FOREACH user_orders GENERATE 
-         users::name AS customer_name,
-         orders::product AS product,
-         orders::quantity AS qty;
-
-DUMP result;
-```
-
-### Ejemplo 3: Ventas Totales por Región
-
-```pig
-sales = LOAD 'sales.csv' USING PigStorage(',')
-        AS (sale_id:int, region:chararray, category:chararray, amount:float);
-
--- Agrupar por región
-by_region = GROUP sales BY region;
-
--- Calcular totales
-totals = FOREACH by_region GENERATE 
-         group AS region,
-         SUM(sales.amount) AS total_sales,
-         AVG(sales.amount) AS avg_sale,
-         COUNT(sales) AS num_sales;
-
-DUMP totals;
-```
-
-### Ejemplo 4: Encontrar Top Productos por Ventas
-
-```pig
-orders = LOAD 'orders.csv' USING PigStorage(',')
-         AS (order_id:int, user_id:int, product:chararray, quantity:int, price:float);
-
--- Calcular total por producto
-by_product = GROUP orders BY product;
-product_totals = FOREACH by_product GENERATE 
-                 group AS product,
-                 SUM(orders.quantity) AS total_quantity,
-                 SUM(orders.quantity * orders.price) AS revenue;
-
--- Ordenar por revenue
-sorted = ORDER product_totals BY revenue DESC;
-top5 = LIMIT sorted 5;
-
-DUMP top5;
-```
-
-## 🎯 Lista de Ejercicios (40)
-
-**Ejercicios 1-12**: JOIN operations
-- INNER JOIN entre diferentes tablas
-- LEFT/RIGHT/FULL OUTER JOIN
-- Joins múltiples
-- Proyección después de JOIN
-
-**Ejercicios 13-24**: GROUP BY y agregaciones
-- GROUP BY simple
-- COUNT, SUM, AVG, MIN, MAX
-- Múltiples agregaciones
-- Filtrar grupos (HAVING-like)
-
-**Ejercicios 25-32**: Funciones integradas
-- String manipulation (UPPER, LOWER, CONCAT, SUBSTRING)
-- Math functions (ROUND, ABS, CEIL, FLOOR)
-- Collection functions (SIZE, IsEmpty)
-
-**Ejercicios 33-40**: Operaciones complejas
-- SPLIT y UNION
-- COGROUP
-- FLATTEN
-- Queries anidados complejos
-
-## 🔗 Recursos Oficiales
-
-- [Pig Join Operations](https://pig.apache.org/docs/latest/basic.html#join)
-- [Pig Group Operations](https://pig.apache.org/docs/latest/basic.html#group)
-- [Built-in Functions](https://pig.apache.org/docs/latest/func.html)
-- [Eval Functions](https://pig.apache.org/docs/latest/func.html#eval-functions)
+## 6. Funciones Integradas Adicionales (UPPER, SUBSTRING, CONCAT, ROUND)
+Dentro de la cláusula `FOREACH ... GENERATE` puedes aplicar transformaciones a nivel de fila:
+- **`UPPER(campo)`**: Pasa el texto a mayúsculas.
+- **`SUBSTRING(campo, inicio, fin)`**: Extrae una porción de texto. *(Ojo, el índice de inicio en Pig es 0).*
+- **`CONCAT(campo1, campo2)`**: Une dos cadenas de texto. Solo acepta dos argumentos. Para unir más, debes anidar: `CONCAT(CONCAT(a, b), c)`.
+- **`ROUND(campo)`**: Redondea un número al entero más cercano.
 
 ---
-
-**¡Estos conceptos son el núcleo del procesamiento de datos en Pig!**
+📝 **Regla de oro de este nivel**: Domina la desambiguación (`tabla::columna`) después de realizar cruces y el acceso al campo especial `group` después de agrupar. Estos ejercicios afianzarán tu capacidad de manipular datos relacionales distribuidos.

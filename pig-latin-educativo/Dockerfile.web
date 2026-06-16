@@ -1,0 +1,17 @@
+FROM node:18-bullseye-slim
+
+# Instalar cliente de Docker para poder hacer docker exec (DooD)
+RUN apt-get update && apt-get install -y docker.io && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Instalar dependencias de Node
+COPY package*.json ./
+RUN npm install
+
+# Copiar el código fuente
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

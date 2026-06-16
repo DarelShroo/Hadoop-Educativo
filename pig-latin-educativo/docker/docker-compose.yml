@@ -34,6 +34,26 @@ services:
       timeout: 10s
       retries: 3
       start_period: 60s
+  web:
+    build:
+      context: ..
+      dockerfile: Dockerfile.web
+    container_name: pig-latin-web
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./scripts:/app/docker/scripts:rw
+      - ../server:/app/server:rw
+      - ../public:/app/public:rw
+    environment:
+      - PORT=3000
+      - DOCKER_CONTAINER_NAME=hadoop-pig-executor
+    networks:
+      - pig-network
+    depends_on:
+      hadoop-pig:
+        condition: service_healthy
 
 networks:
   pig-network:

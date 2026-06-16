@@ -1,188 +1,88 @@
 # Nivel 1: Básico - Fundamentos de Pig Latin
 
-## 📚 Teoría
+Bienvenido al primer nivel de Pig Latin. A diferencia de SQL, Pig Latin es un lenguaje procedimental de flujo de datos (Data Flow). En lugar de escribir una única consulta declarativa, en Pig escribes paso a paso las transformaciones que sufrirán tus datos.
 
-### ¿Qué es Pig Latin?
+Por favor, lee y comprende la teoría antes de comenzar los ejercicios de este nivel.
 
-Apache Pig Latin es un **lenguaje de flujo de datos** de alto nivel diseñado para analizar grandes conjuntos de datos en Hadoop. A diferencia de MapReduce que requiere escribir código Java complejo, Pig Latin permite expresar transformaciones de datos de manera declarativa y concisa.
-
-### Modelo de Datos
-
-Pig trabaja con los siguientes tipos de datos:
-
-- **Atom**: Valor simple (int, long, float, double, chararray, bytearray)
-- **Tuple**: Secuencia ordenada de campos, e.g., `(Alice, 25, USA)`
-- **Bag**: Colección desordenada de tuples, e.g., `{(1,2), (3,4)}`
-- **Map**: Conjunto de pares clave-valor, e.g., `[name#Alice, age#25]`
-
-### Conceptos Clave
-
-#### 1. LOAD - Cargar Datos
-
+## 1. Carga de Datos (LOAD)
+El primer paso en cualquier script de Pig es cargar los datos. Usamos la función `PigStorage` para especificar cómo están separados los datos y la palabra clave `AS` para definir el esquema (nombres de las columnas y sus tipos de datos).
 ```pig
--- Cargar CSV con esquema
-data = LOAD 'input.csv' USING PigStorage(',') 
-       AS (name:chararray, age:int, country:chararray);
-
--- Sin esquema (todos los campos son bytearray)
-data = LOAD 'input.csv' USING PigStorage(',');
-```
-
-**Funciones de carga comunes**:
-- `PigStorage(delimiter)`: Archivos delimitados (CSV, TSV)
-- `TextLoader()`: Líneas de texto sin procesar
-- `JsonLoader()`: Datos JSON
-
-#### 2. FILTER - Filtrar Datos
-
-```pig
--- Filtrar por condición simple
-adults = FILTER data BY age >= 18;
-
--- Múltiples condiciones
-usa_adults = FILTER data BY age >= 18 AND country == 'USA';
-
--- Operadores: ==, !=, <, >, <=, >=, AND, OR, NOT
--- Coincidencia de patrones
-emails = FILTER data BY email MATCHES '.*@gmail\\.com';
-```
-
-#### 3. FOREACH - Transformar Datos
-
-```pig
--- Seleccionar columnas
-names = FOREACH data GENERATE name, age;
-
--- Transformaciones
-doubled = FOREACH data GENERATE name, age * 2 AS double_age;
-
--- Operaciones aritméticas: +, -, *, /, %
-```
-
-#### 4. LIMIT - Limitar Resultados
-
-```pig
--- Primeras 10 filas
-sample = LIMIT data 10;
-```
-
-#### 5. ORDER BY - Ordenar Datos
-
-```pig
--- Orden ascendente
-sorted = ORDER data BY age;
-
--- Orden descendente
-sorted_desc = ORDER data BY age DESC;
-```
-
-#### 6. DISTINCT - Eliminar Duplicados
-
-```pig
--- Valores únicos
-unique_countries = DISTINCT (FOREACH data GENERATE country);
-```
-
-#### 7. DUMP y STORE - Salida de Datos
-
-```pig
--- Mostrar resultados en consola (solo para pruebas)
-DUMP data;
-
--- Guardar en archivo
-STORE data INTO 'output' USING PigStorage(',');
-```
-
-#### 8. DESCRIBE e ILLUSTRATE - Depuración
-
-```pig
--- Ver esquema de relación
-DESCRIBE data;
-
--- Ver datos de ejemplo paso a paso
-ILLUSTRATE data;
-```
-
-### Funciones Integradas Básicas
-
-- **String**: `UPPER()`, `LOWER()`, `SUBSTRING()`, `TRIM()`
-- **Math**: `ABS()`, `ROUND()`, `CEIL()`, `FLOOR()`
-- **Null handling**: `IsEmpty()`, `SIZE()`
-
-## 📖 Ejemplos Completos
-
-### Ejemplo 1: Análisis Básico de Usuarios
-
-```pig
--- Cargar datos de usuarios
-users = LOAD 'users.csv' USING PigStorage(',') 
+users = LOAD '/datasets/users.csv' 
+        USING PigStorage(',') 
         AS (user_id:int, name:chararray, age:int, country:chararray);
-
--- Filtrar usuarios mayores de 30
-adult_users = FILTER users BY age > 30;
-
--- Contar usuarios por país (veremos GROUP en Nivel 2)
-DUMP adult_users;
 ```
+- `chararray`: Equivalente a string/texto.
+- `int` / `float`: Tipos numéricos.
 
-### Ejemplo 2: Procesamiento de Productos
-
+## 2. Inspección y Depuración (DESCRIBE, LIMIT, DUMP)
+- **`DESCRIBE relacion;`**: Muestra la estructura (el esquema) de la relación. No procesa datos, solo lee los metadatos.
+- **`LIMIT relacion n;`**: Toma solo las primeras `n` filas. Ideal para probar sin procesar miles de registros.
+- **`DUMP relacion;`**: Ejecuta el pipeline e imprime los resultados en pantalla. Todo script debe terminar con un `DUMP` o `STORE` para que Hadoop ejecute las acciones.
 ```pig
--- Cargar productos
-products = LOAD 'products.csv' USING PigStorage(',')
-           AS (name:chararray, category:chararray, price:float);
-
--- Filtrar productos caros
-expensive = FILTER products BY price > 500;
-
--- Ordenar por precio
-sorted = ORDER expensive BY price DESC;
-
--- Ver top 5
-top5 = LIMIT sorted 5;
+top5 = LIMIT users 5;
 DUMP top5;
 ```
 
-### Ejemplo 3: Limpieza de Datos
-
+## 3. Proyección de Columnas (FOREACH ... GENERATE)
+Equivale al `SELECT` en SQL. Se usa para seleccionar columnas específicas, crear nuevas o aplicar transformaciones matemáticas fila por fila.
 ```pig
--- Cargar con esquema flexible
-raw_data = LOAD 'data.csv' USING PigStorage(',');
+-- Seleccionar columnas
+nombres = FOREACH users GENERATE name, country;
 
--- Proyectar solo columnas necesarias (índices 0-indexed: $0, $1, ...)
-clean = FOREACH raw_data GENERATE $0 AS id, $1 AS value;
-
--- Eliminar duplicados
-unique = DISTINCT clean;
-
-DUMP unique;
+-- Crear nuevas columnas y renombrarlas con AS
+edades_meses = FOREACH users GENERATE name, age * 12 AS age_in_months;
 ```
 
-## 🎯 Lista de Ejercicios (30)
+## 4. Filtrado de Datos (FILTER ... BY)
+Equivalente al `WHERE` de SQL. Filtra las filas según condiciones matemáticas o lógicas.
+```pig
+adultos = FILTER users BY age >= 18;
+usa_users = FILTER users BY country == 'USA';
+```
+- Operadores: `==` (igualdad), `>`, `<`, `>=`, `<=`, `!=`
+- Lógica: `AND`, `OR`, `NOT`
 
-Los ejercicios progresan desde operaciones básicas hasta combinaciones más complejas:
+## 5. Ordenamiento (ORDER ... BY)
+Ordena los datos basándose en una o más columnas.
+```pig
+ordenados = ORDER users BY age DESC;
+```
+- `ASC`: Ascendente (predeterminado).
+- `DESC`: Descendente (de mayor a menor).
 
-**Ejercicios 1-10**: LOAD, LIMIT, DUMP, DESCRIBE
-- Cargar datasets y explorar estructuras
-- Practicar diferentes delimitadores y esquemas
+## 6. Eliminación de Duplicados (DISTINCT)
+Elimina las tuplas (filas) repetidas en una relación. Si necesitas valores únicos de una columna, primero proyecta esa columna con `FOREACH` y luego aplica `DISTINCT`.
+```pig
+paises = FOREACH users GENERATE country;
+paises_unicos = DISTINCT paises;
+```
 
-**Ejercicios 11-20**: FILTER con condiciones variadas
-- Filtrado simple (==, !=, <, >)
-- Condiciones compuestas (AND, OR, NOT)
-- Expresiones regulares con MATCHES
+## 7. Muestreo Aleatorio (SAMPLE)
+Devuelve un porcentaje aleatorio del conjunto de datos. Útil para hacer pruebas estadísticas.
+```pig
+-- Toma un 30% aleatorio (0.3)
+muestra = SAMPLE users 0.3;
+```
 
-**Ejercicios 21-30**: FOREACH, ORDER, DISTINCT
-- Selección y transformación de columnas
-- Operaciones aritméticas
-- Ordenamiento y eliminación de duplicados
+## 8. Agrupación y División de Datos (UNION, SPLIT)
+- **`UNION rel1, rel2;`**: Une dos o más relaciones que tienen el mismo esquema agregando sus filas.
+- **`SPLIT`**: Divide una relación en múltiples relaciones de forma condicional.
+```pig
+SPLIT users INTO 
+    jovenes IF age < 25, 
+    adultos IF age >= 25 AND age <= 40, 
+    mayores IF age > 40;
+```
 
-## 🔗 Recursos Oficiales
+## 9. Agrupación y Agregación (GROUP, MAX, MIN)
+En Pig, `GROUP` crea un registro complejo donde la clave se llama `group` y los valores son una "bolsa" (bag) con todas las filas originales.
+```pig
+agrupados = GROUP users BY country;
+-- Esto crea: (USA, {(1,John,30,USA), (2,Mary,25,USA)})
 
-- [Pig Latin Basics - Apache Pig Documentation](https://pig.apache.org/docs/latest/basic.html)
-- [Pig Data Model](https://pig.apache.org/docs/latest/basic.html#data-model)
-- [Pig Latin Statements](https://pig.apache.org/docs/latest/basic.html#pig-latin-statements)
-- [Built-in Functions](https://pig.apache.org/docs/latest/func.html)
+-- Luego podemos calcular agregados:
+resultados = FOREACH agrupados GENERATE group AS pais, MAX(users.age);
+```
 
 ---
-
-**¡Comienza con el Ejercicio 1 y practica paso a paso!**
+📝 **Regla de oro de este nivel**: Recuerda que Pig es secuencial. Debes asignar el resultado de cada transformación a una nueva variable (relación) y usar esa nueva variable en el siguiente paso. ¡Todo culmina con un `DUMP`!
